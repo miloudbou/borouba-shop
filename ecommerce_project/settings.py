@@ -34,7 +34,8 @@ SECRET_KEY = env("SECRET_KEY", default="change-this-to-a-secure-key")
 DEBUG = env.bool("DEBUG", default=True)
 
 # السماح بالوصول
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=['127.0.0.1', 'localhost', 'www.bouroubaShop.dz'])
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=['127.0.0.1', 'localhost', 'borouba-shop.onrender.com'])
+
 
 # التطبيقات المثبتة
 INSTALLED_APPS = [
