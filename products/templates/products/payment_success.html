@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- صفحة تأكيد الدفع -->
+<div class="container mt-5 text-center">
+    <h2 class="text-success display-4">✅ {% if language == 'ar' %} تمت عملية الدفع بنجاح! {% else %} Payment Successful! {% endif %}</h2>
+    
+    {% if messages %}
+        <div class="alert alert-success mt-3" role="alert">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <p class="mt-4 lead">
+        {% if language == 'ar' %}
+            شكراً لك على عملية الدفع. لقد تم استلام المبلغ، وستتلقى رسالة تأكيد عبر البريد الإلكتروني قريبًا.
+        {% else %}
+            Thank you for your payment. The amount has been received, and you will receive a confirmation email soon.
+        {% endif %}
+    </p>
+    
+    <!-- أزرار العودة إلى الصفحة الرئيسية أو متابعة التسوق -->
+    <div class="mt-5">
+        <a href="{% url 'home' %}" class="btn btn-primary btn-lg me-3">
+            {% if language == 'ar' %} 🏠 العودة إلى الصفحة الرئيسية {% else %} 🏠 Back to Home {% endif %}
+        </a>
+        <a href="{% url 'products' %}" class="btn btn-success btn-lg">
+            {% if language == 'ar' %} 🛍️ متابعة التسوق {% else %} 🛍️ Continue Shopping {% endif %}
+        </a>
+    </div>
+</div>
+
+{% endblock %}
+

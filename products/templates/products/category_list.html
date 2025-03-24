@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-4">
+        {% if language == 'ar' %}
+            التصنيفات
+        {% else %}
+            Categories
+        {% endif %}
+    </h2>
+    <div class="row">
+        {% for category in categories %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm hover-shadow">
+                    <div class="card-body text-center">
+                        <h5 class="card-title mb-3">{{ category.name }}</h5>
+                        <p class="card-text">{{ category.description }}</p>
+                        <a href="{% url 'category_list' %}" class="btn btn-outline-primary btn-lg">
+                            {% if language == 'ar' %}
+                                عرض المنتجات
+                            {% else %}
+                                View Products
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 pt-5 text-center">
+    <!-- عنوان النجاح -->
+    <h1 class="text-success mb-4">
+        ✅ {% if language == 'ar' %} تم تقديم طلبك بنجاح! {% else %} Your order has been successfully placed! {% endif %}
+    </h1>
+
+    <!-- نص التأكيد -->
+    <p class="lead mb-4">
+        {% if language == 'ar' %}
+            شكراً لك! سيتم التواصل معك قريباً لتأكيد الطلب ومعرفة تفاصيل الشحن.
+        {% else %}
+            Thank you! We will contact you soon to confirm the order and provide shipping details.
+        {% endif %}
+    </p>
+
+    <!-- عرض تفاصيل الطلب -->
+    <h4 class="mb-4">
+        {% if language == 'ar' %}
+            تفاصيل الطلب:
+        {% else %}
+            Order Details:
+        {% endif %}
+    </h4>
+    
+    <div class="text-start mb-4">
+        <p><strong>{% if language == 'ar' %}رقم الطلب: {% else %}Order Number: {% endif %} {{ order.id }}</p>
+        <p><strong>{% if language == 'ar' %}طريقة الدفع: {% else %}Payment Method: {% endif %} {{ order.payment_method }}</p>
+        <p><strong>{% if language == 'ar' %}طريقة الشحن: {% else %}Shipping Method: {% endif %} {{ order.shipping_method.name }} - {{ order.shipping_method.price }} دج</p>
+        <p><strong>{% if language == 'ar' %}الإجمالي: {% else %}Total Amount: {% endif %} {{ order.total_amount }} دج</p>
+        <p><strong>{% if language == 'ar' %}حالة الدفع: {% else %}Payment Status: {% endif %} 
+            {% if order.is_paid %}
+                {% if language == 'ar' %} تم الدفع بنجاح {% else %} Paid Successfully {% endif %}
+            {% else %}
+                {% if language == 'ar' %} لم يتم الدفع بعد {% else %} Not Paid Yet {% endif %}
+            {% endif %}
+        </p>
+    </div>
+
+    <!-- زر الرجوع إلى المتجر -->
+    <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
+        🔙 {% if language == 'ar' %} الرجوع إلى المتجر {% else %} Back to Store {% endif %}
+    </a>
+</div>
+{% endblock %}

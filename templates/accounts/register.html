@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}التسجيل{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">إنشاء حساب جديد</h2>
+    <form method="POST" action="{% url 'register' %}" class="mt-4">
+        {% csrf_token %}
+        <div class="form-group">
+            {{ form.as_p }} <!-- عرض الحقول تلقائيًا -->
+        </div>
+        <button type="submit" class="btn btn-primary mt-4 w-100">تسجيل</button>
+    </form>
+</div>
+{% endblock %}

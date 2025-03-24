@@ -1,0 +1,197 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 cart-container">
+    <h2 class="text-center mb-4">
+        🛒 
+        {% if language == 'ar' %}
+            سلة المشتريات
+        {% else %}
+            Shopping Cart
+        {% endif %}
+    </h2>
+
+    {% if cart_items %}
+        <table class="table table-striped text-center cart-table">
+            <thead class="table-dark">
+                <tr>
+                    <th>
+                        {% if language == 'ar' %}
+                            الصورة
+                        {% else %}
+                            Image
+                        {% endif %}
+                    </th>
+                    <th>
+                        {% if language == 'ar' %}
+                            المنتج
+                        {% else %}
+                            Product
+                        {% endif %}
+                    </th>
+                    <th>
+                        {% if language == 'ar' %}
+                            السعر
+                        {% else %}
+                            Price
+                        {% endif %}
+                    </th>
+                    <th>
+                        {% if language == 'ar' %}
+                            الكمية
+                        {% else %}
+                            Quantity
+                        {% endif %}
+                    </th>
+                    <th>
+                        {% if language == 'ar' %}
+                            الإجمالي
+                        {% else %}
+                            Total
+                        {% endif %}
+                    </th>
+                    <th>
+                        {% if language == 'ar' %}
+                            إزالة
+                        {% else %}
+                            Remove
+                        {% endif %}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td>
+                        <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="img-thumbnail" style="max-width: 80px; height: auto;">
+                    </td>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.product.price }} دج</td>
+                    <td>
+                        <input type="number" data-id="{{ item.product.id }}" class="form-control text-center w-50 d-inline quantity-input" value="{{ item.quantity }}" min="1">
+                    </td>
+                    <td><strong>{{ item.total_price }} دج</strong></td>
+                    <td>
+                        <button class="btn btn-sm btn-danger btn-remove" onclick="confirmDelete('{{ item.product.id }}')">❌</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="text-end mt-4">
+            <h4>
+                {% if language == 'ar' %}
+                    الإجمالي: 
+                {% else %}
+                    Total: 
+                {% endif %}
+                <strong class="total-price">{{ cart_total }} دج</strong>
+            </h4>
+
+            {% if shipping_free %}
+                <p class="text-success">
+                    {% if language == 'ar' %}
+                        الشحن مجاني!
+                    {% else %}
+                        Free shipping!
+                    {% endif %}
+                </p>
+            {% endif %}
+
+            <a href="{% url 'checkout' %}" class="btn btn-lg checkout-btn mt-3">
+                {% if language == 'ar' %}
+                    ✅ إتمام الشراء
+                {% else %}
+                    ✅ Checkout
+                {% endif %}
+            </a>
+        </div>
+
+    {% else %}
+        <div class="alert alert-warning text-center">
+            🛍️ 
+            {% if language == 'ar' %}
+                سلة المشتريات فارغة! 
+                <a href="{% url 'product_list' %}" class="alert-link">تصفح المنتجات</a>
+            {% else %}
+                Your cart is empty! 
+                <a href="{% url 'product_list' %}" class="alert-link">Browse Products</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $(".quantity-input").on("change", function() {
+        var productId = $(this).data("id");
+        var newQuantity = $(this).val();
+        
+        var cart = JSON.parse(localStorage.getItem("cart") || "{}");
+        cart[productId] = newQuantity;
+        localStorage.setItem("cart", JSON.stringify(cart));
+
+        $.ajax({
+            url: "/update_cart/" + productId + "/",
+            method: "POST",
+            data: {
+                quantity: newQuantity,
+                csrfmiddlewaretoken: "{{ csrf_token }}"
+            },
+            success: function(response) {
+                location.reload();
+            }
+        });
+    });
+});
+
+function confirmDelete(productId) {
+    Swal.fire({
+        title: 
+            {% if language == 'ar' %}
+                "هل أنت متأكد؟"
+            {% else %}
+                "Are you sure?"
+            {% endif %}
+        ,
+        text: 
+            {% if language == 'ar' %}
+                "لن تتمكن من التراجع عن هذا الإجراء!"
+            {% else %}
+                "You won't be able to undo this action!"
+            {% endif %}
+        ,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: 
+            {% if language == 'ar' %}
+                "نعم، احذف المنتج!"
+            {% else %}
+                "Yes, delete the product!"
+            {% endif %}
+        ,
+        cancelButtonText: 
+            {% if language == 'ar' %}
+                "إلغاء"
+            {% else %}
+                "Cancel"
+            {% endif %}
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "/remove_from_cart/" + productId;
+        }
+    });
+}
+</script>
+{% endblock %}
+
+
+

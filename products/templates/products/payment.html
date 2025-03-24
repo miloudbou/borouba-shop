@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <!-- عنوان الصفحة -->
+    <h2 class="text-center text-success">
+        💳 {% if language == 'ar' %} الدفع عبر PayPal {% else %} PayPal Payment {% endif %}
+    </h2>
+
+    <!-- تنبيه للمستخدم -->
+    <div class="alert alert-info text-center">
+        {% if language == 'ar' %}
+            يرجى تحديد المبلغ والعملة وطريقة الدفع وطريقة الشحن لإتمام عملية الدفع عبر PayPal.
+        {% else %}
+            Please select the amount, currency, payment method, and shipping method to complete the PayPal payment.
+        {% endif %}
+    </div>
+
+    <!-- نموذج الدفع -->
+    <form id="payment-form" method="post" action="{% url 'create_payment' %}" novalidate>
+        {% csrf_token %}
+
+        <!-- حقل إدخال المبلغ -->
+        <div class="form-group">
+            <label for="amount">💰 
+                {% if language == 'ar' %} المبلغ المطلوب دفعه {% else %} Amount to be paid {% endif %}
+            </label>
+            <input type="number" id="amount" name="amount" class="form-control"
+                   placeholder="{% if language == 'ar' %} أدخل المبلغ {% else %} Enter amount {% endif %}"
+                   required min="1" step="0.01">
+        </div>
+
+        <!-- قائمة اختيار العملة -->
+        <div class="form-group mt-3">
+            <label for="currency">🌍 
+                {% if language == 'ar' %} العملة {% else %} Currency {% endif %}
+            </label>
+            <select id="currency" name="currency" class="form-control text-capitalize" required>
+                <option value="USD">💵 دولار أمريكي (USD)</option>
+                <option value="DZD">🇩🇿 دينار جزائري (DZD)</option>
+            </select>
+        </div>
+
+        <!-- قائمة اختيار طريقة الدفع -->
+        <div class="form-group mt-3">
+            <label for="payment_method">💳 
+                {% if language == 'ar' %} طريقة الدفع {% else %} Payment Method {% endif %}
+            </label>
+            <select id="payment_method" name="payment_method" class="form-control text-capitalize" required>
+                {% for method in payment_methods %}
+                    <option value="{{ method.name }}">{{ method.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- قائمة اختيار طريقة الشحن -->
+        <div class="form-group mt-3">
+            <label for="shipping_method">🚚 
+                {% if language == 'ar' %} طريقة الشحن {% else %} Shipping Method {% endif %}
+            </label>
+            <select id="shipping_method" name="shipping_method" class="form-control text-capitalize" required>
+                {% for method in shipping_methods %}
+                    <option value="{{ method.id }}">
+                        {{ method.name }} - {{ method.price }} دج
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- زر إتمام الدفع -->
+        <button type="submit" class="btn btn-primary mt-3 w-100">
+            🛒 {% if language == 'ar' %} إتمام الدفع {% else %} Complete Payment {% endif %}
+        </button>
+    </form>
+
+    <!-- زر PayPal -->
+    <div id="paypal-button-container" class="mt-4 text-center"></div>
+
+    <!-- رسالة توضيحية -->
+    <p class="mt-4 text-muted text-center">
+        {% if language == 'ar' %}
+            سيتم تحويل المبلغ تلقائيًا إلى الدولار الأمريكي عند استخدام الدينار الجزائري.
+        {% else %}
+            The amount will be automatically converted to USD when using DZD.
+        {% endif %}
+    </p>
+
+</div>
+
+<!-- تضمين مكتبة PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        paypal.Buttons({
+            createOrder: function(data, actions) {
+                let amount = document.getElementById('amount').value;
+                let currency = document.getElementById('currency').value;
+
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: amount,
+                            currency_code: currency
+                        }
+                    }]
+                });
+            },
+            onApprove: function(data, actions) {
+                return actions.order.capture().then(function(details) {
+                    alert('✅ الدفع ناجح! شكرا لك، ' + details.payer.name.given_name);
+
+                    // إرسال الطلب إلى السيرفر
+                    let form = document.getElementById('payment-form');
+                    form.submit();
+                });
+            },
+            onError: function(err) {
+                console.error("❌ خطأ في الدفع:", err);
+                alert("حدث خطأ أثناء الدفع، يرجى المحاولة مرة أخرى.");
+            }
+        }).render('#paypal-button-container');
+    });
+</script>
+
+{% endblock %

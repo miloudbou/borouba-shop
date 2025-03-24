@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">
+        {% if language == 'ar' %}
+            إتمام الطلب
+        {% else %}
+            Checkout
+        {% endif %}
+    </h2>
+
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+        
+        <!-- إضافة حقل الدفع -->
+        <div class="form-group">
+            <label for="payment_method">💳 {% if language == 'ar' %}طريقة الدفع{% else %}Payment Method{% endif %}</label>
+            <select id="payment_method" name="payment_method" class="form-control" required>
+                {% for method in payment_methods %}
+                    <option value="{{ method.name }}">{{ method.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- إضافة حقل الشحن -->
+        <div class="form-group mt-3">
+            <label for="shipping_method">🚚 {% if language == 'ar' %}طريقة الشحن{% else %}Shipping Method{% endif %}</label>
+            <select id="shipping_method" name="shipping_method" class="form-control" required>
+                {% for method in shipping_methods %}
+                    <option value="{{ method.id }}">
+                        {{ method.name }} - {{ method.price }} دج
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- الحقول الأصلية من النموذج -->
+        <div class="form-group mt-3">
+            {{ form.as_p }}
+        </div>
+
+        <div class="form-group mt-4">
+            <h4 class="text-right">
+                {% if language == 'ar' %}
+                    الإجمالي:
+                {% else %}
+                    Total:
+                {% endif %}
+                <strong>{{ total_amount }} دج</strong>
+            </h4>
+        </div>
+        
+        <button type="submit" class="btn btn-success w-100">
+            {% if language == 'ar' %}
+                إتمام الطلب
+            {% else %}
+                Complete Order
+            {% endif %}
+        </button>
+    </form>
+
+    <hr>
+
+    <h3 class="text-center mb-4">
+        {% if language == 'ar' %}
+            أو يمكنك إتمام الطلب كزائر
+        {% else %}
+            Or you can checkout as a guest
+        {% endif %}
+    </h3>
+    <form action="{% url 'create_guest_order' %}" method="post" class="mb-4">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary w-100">
+            {% if language == 'ar' %}
+                إتمام الطلب كزائر
+            {% else %}
+                Checkout as Guest
+            {% endif %}
+        </button>
+    </form>
+
+    <hr>
+
+    <div class="text-center">
+        <a href="{% url 'view_cart' %}" class="btn btn-outline-primary">
+            {% if language == 'ar' %}
+                الذهاب إلى سلة التسوق
+            {% else %}
+                Go to Cart
+            {% endif %}
+        </a>
+    </div>
+</div>
+{% endblock %}

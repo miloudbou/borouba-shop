@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}قائمة المنتجات{% endblock %}
+
+{% block content %}
+<!-- رأس الصفحة -->
+<header class="bg-primary text-white text-center py-5">
+    <h1 class="display-4">قائمة المنتجات</h1>
+    <p class="lead">اكتشف مجموعتنا الواسعة من المنتجات المميزة</p>
+</header>
+
+<!-- نموذج البحث -->
+<div class="container mt-4">
+    <form method="GET" action="{% url 'product_list' %}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="ابحث عن منتج..." value="{{ request.GET.search }}">
+            <button class="btn btn-dark" type="submit">🔍 بحث</button>
+        </div>
+    </form>
+</div>
+
+<!-- فلاتر المنتجات -->
+<div class="container mt-4">
+    <form method="GET" class="row">
+        <div class="col-md-8">
+            <select name="category" class="form-select">
+                <option value="">اختر الفئة</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-secondary w-100">تصفية</button>
+        </div>
+    </form>
+</div>
+
+<!-- عرض المنتجات -->
+<div class="container mt-5">
+    <h2 class="text-center mb-4">منتجاتنا المميزة</h2>
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-light rounded">
+                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.title }}</h5>
+                    <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+                    <p class="text-primary fw-bold">{{ product.price }} د.ج</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">إضافة إلى السلة</a>
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-info btn-sm">عرض التفاصيل</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-center">لا توجد منتجات حالياً لعرضها.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

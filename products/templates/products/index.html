@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}الرئيسية | بوروبة شوب{% endblock %}
+
+{% block content %}
+<div class="text-center mt-5">
+    <!-- عنوان الترحيب -->
+    <h1 class="display-4 fw-bold">مرحبًا بك في <span class="text-warning">بوروبة شوب!</span></h1>
+    <p class="lead">تصفح أحدث المنتجات لدينا بأفضل الأسعار. | Découvrez nos derniers produits aux meilleurs prix.</p>
+    <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
+        <i class="fas fa-shopping-cart"></i> تصفح المنتجات | Voir les Produits
+    </a>
+</div>
+
+<!-- قسم المنتجات المميزة -->
+<div class="container mt-5">
+    <h2 class="text-center fw-bold mb-4">✨ المنتجات المميزة | Produits Vedettes ✨</h2>
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-0">
+                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">{{ product.name }}</h5>
+                    <p class="card-text text-muted">{{ product.price }} د.ج | DA</p>
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-primary">
+                        <i class="fas fa-info-circle"></i> التفاصيل | Détails
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

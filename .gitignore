@@ -1,0 +1,12 @@
+database/
+
+
+# منع ملفات البيئة
+.env
+
+# منع ملفات السجلات
+debug.log
+dump.rdb
+
+# منع ملفات التكوين الخاصة بـ Docker و Render (اختياري)
+docker-compose.yml

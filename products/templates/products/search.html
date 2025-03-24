@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}بحث المنتجات{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">بحث عن منتج</h2>
+    <form method="GET" action="{% url 'product_list' %}" class="mt-4">
+        <div class="input-group">
+            <input type="text" name="search" class="form-control" placeholder="ابحث عن منتج..." value="{{ request.GET.search }}">
+            <button class="btn btn-dark" type="submit">🔍 بحث</button>
+        </div>
+    </form>
+
+    <div class="mt-4">
+        {% if products %}
+            <h4 class="text-center mb-4">نتائج البحث عن "{{ request.GET.search }}"</h4>
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-lg border-light rounded">
+                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ product.title }}</h5>
+                                <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+                                <p class="text-primary fw-bold">{{ product.price }} د.ج</p>
+                                <a href="{% url 'product_detail' product.id %}" class="btn btn-info">عرض التفاصيل</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center">لا توجد نتائج مطابقة لبحثك.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

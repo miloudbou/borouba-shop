@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}قائمة المنتجات{% endblock %}
+
+{% block content %}
+<!-- رأس الصفحة -->
+<header class="bg-primary text-white text-center py-5">
+    <h1 class="display-4">قائمة المنتجات</h1>
+    <p class="lead">اكتشف منتجاتنا المتنوعة والمميزة</p>
+</header>
+
+<!-- شريط البحث -->
+<div class="container mt-4">
+    <form action="{% url 'search' %}" method="get" class="d-flex justify-content-center">
+        <input type="text" name="search" class="form-control w-50" placeholder="ابحث عن منتج..." value="{{ search }}">
+        <button type="submit" class="btn btn-primary ms-2">بحث</button>
+    </form>
+</div>
+
+<!-- عرض المنتجات -->
+<div class="container mt-5">
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-lg border-light rounded">
+                <!-- صورة المنتج مع تأثير التمرير -->
+                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}" style="transition: transform 0.3s ease;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.title }}</h5>
+                    <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+                    <p class="text-primary fw-bold">{{ product.price }} د.ج</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <!-- إضافة إلى السلة -->
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success w-100">إضافة إلى السلة</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p class="text-center">لا توجد منتجات حالياً لعرضها.</p>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
