@@ -15,7 +15,7 @@
 </head>
 <body>
 
-    <!-- شريط التنقل -->
+    <!-- 🔹 شريط التنقل -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{% url 'home' %}">
@@ -27,30 +27,36 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item"><a class="nav-link" href="{% url 'home' %}"><i class="fas fa-home"></i> الرئيسية | Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'view_cart' %}"><i class="fas fa-shopping-cart"></i> سلة التسوق | Panier</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}"><i class="fas fa-box"></i> منتجاتنا | Nos Produits</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}"><i class="fas fa-tags"></i> العروض الخاصة | Offres Spéciales</a></li>
-
-                    <!-- هنا أضفنا عرض عدد العناصر في السلة -->
+                    <li class="nav-item"><a class="nav-link" href="{% url 'offers' %}"><i class="fas fa-tags"></i> العروض الخاصة | Offres Spéciales</a></li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'view_cart' %}">
-                            <i class="fas fa-shopping-cart"></i> سلة المشتريات ({{ cart_items|length }})
+                            <i class="fas fa-shopping-cart"></i> 🛒 سلة التسوق | Panier <span class="badge bg-danger">{{ cart_items|length }}</span>
                         </a>
                     </li>
+                    
+                    <!-- زر تسجيل الدخول والتسجيل -->
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج | Déconnexion</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}"><i class="fas fa-user-plus"></i> التسجيل | S'inscrire</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول | Se connecter</a></li>
+                    {% endif %}
                 </ul>
+                
                 <!-- زر اتصل بنا -->
                 <a href="{% url 'contact' %}" class="btn btn-contact ms-3"><i class="fas fa-phone"></i> اتصل بنا | Contact</a>
             </div>
         </div>
     </nav>
 
-    <!-- محتوى الصفحة -->
+    <!-- 🔹 محتوى الصفحة -->
     <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
 
-    <!-- الفوتر -->
-    <footer class="footer-custom mt-5">
+    <!-- 🔹 الفوتر -->
+    <footer class="footer-custom mt-5 text-center">
         <p>جميع الحقوق محفوظة &copy; 2025 | Tous droits réservés &copy; 2025</p>
         <p>❤️ بوروبة شوب | Borouba Shop</p>
     </footer>

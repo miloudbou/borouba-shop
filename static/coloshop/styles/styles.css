@@ -166,5 +166,22 @@ body {
         width: 100%;
         font-size: 1rem;
     }
+    .navbar {
+        background: linear-gradient(45deg, #ffcc00, #ff6600);
+        padding: 15px;
+        border-radius: 10px;
+    }
+    
+    .navbar-nav .nav-link {
+        color: white !important;
+        font-weight: bold;
+        margin-right: 15px;
+        transition: 0.3s;
+    }
+    
+    .navbar-nav .nav-link:hover {
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        transform: scale(1.1);
+    }
 }
 
