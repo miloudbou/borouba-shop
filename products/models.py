@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.timezone import now
 
+
 # 🔹 نموذج التصنيف
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -22,6 +23,8 @@ class Product(models.Model):
     affiliate_link = models.URLField(blank=True, null=True)  # رابط الإحالة من AliExpress
     aliexpress_product_id = models.CharField(max_length=50, blank=True, null=True)  # رقم المنتج في AliExpress
     created_at = models.DateTimeField(default=now)  # تاريخ الإضافة
+    is_offer = models.BooleanField(default=False)
+
 
     def get_price_display(self):
         """إرجاع السعر مع العملة"""
@@ -120,3 +123,4 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} × {self.product.title} في الطلب {self.order.id}"
+     

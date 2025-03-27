@@ -88,70 +88,8 @@
 		</div>
 	</header>
 
-	<div class="fs_menu_overlay"></div>
-
-	<!-- Hamburger Menu -->
-	<div class="hamburger_menu">
-		<div class="hamburger_close"><i class="fa fa-times" aria-hidden="true"></i></div>
-		<div class="hamburger_menu_content text-right">
-			<ul class="menu_top_nav">
-				<li class="menu_item has-children">
-					<a href="#">
-						DZD
-						<i class="fa fa-angle-down"></i>
-					</a>
-					<ul class="menu_selection">
-						<li><a href="#">USD</a></li>
-						<li><a href="#">EUR</a></li>
-					</ul>
-				</li>
-				<li class="menu_item has-children">
-					<a href="#">
-						العربية
-						<i class="fa fa-angle-down"></i>
-					</a>
-					<ul class="menu_selection">
-						<li><a href="#">Français</a></li>
-						<li><a href="#">English</a></li>
-					</ul>
-				</li>
-				<li class="menu_item has-children">
-					<a href="#">
-						حسابي
-						<i class="fa fa-angle-down"></i>
-					</a>
-					<ul class="menu_selection">
-						<li><a href="#"><i class="fa fa-sign-in" aria-hidden="true"></i>تسجيل الدخول</a></li>
-						<li><a href="#"><i class="fa fa-user-plus" aria-hidden="true"></i>التسجيل</a></li>
-					</ul>
-				</li>
-				<li class="menu_item"><a href="#">الرئيسية</a></li>
-				<li class="menu_item"><a href="#">التسوق</a></li>
-				<li class="menu_item"><a href="#">العروض</a></li>
-				<li class="menu_item"><a href="#">الصفحات</a></li>
-				<li class="menu_item"><a href="#">المدونة</a></li>
-				<li class="menu_item"><a href="#">اتصل بنا</a></li>
-			</ul>
-		</div>
-	</div>
-
+	<!-- Product Details -->
 	<div class="container single_product_container">
-		<div class="row">
-			<div class="col">
-
-				<!-- Breadcrumbs -->
-				<div class="breadcrumbs d-flex flex-row align-items-center">
-					<ul>
-						<li><a href="{% url 'home' %}">الرئيسية</a></li>
-						<li><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>{{ product.category.name }}</a></li>
-						<li class="active"><a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i>{{ product.title }}</a></li>
-					</ul>
-				</div>
-
-			</div>
-		</div>
-
-		<!-- Single Product Details -->
 		<div class="row">
 			<div class="col-lg-7">
 				<div class="single_product_pics">
@@ -205,12 +143,41 @@
 							<span id="quantity_value">1</span>
 							<span class="plus"><i class="fa fa-plus" aria-hidden="true"></i></span>
 						</div>
-						<div class="red_button add_to_cart_button"><a href="{% url 'add_to_cart' product.id %}">أضف إلى السلة</a></div>
+						<div class="red_button add_to_cart_button"><a href="#" class="add-to-cart" data-product-id="{{ product.id }}">أضف إلى السلة</a></div>
 					</div>
 				</div>
 			</div>
 		</div>
-
 	</div>
 
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // دالة لإضافة منتج إلى السلة باستخدام AJAX
+    document.querySelector('.add-to-cart').addEventListener('click', function(event) {
+        event.preventDefault();
+        const productId = this.getAttribute('data-product-id');
+        fetch(`/add-to-cart/${productId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ 'product_id': productId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("تم إضافة المنتج إلى السلة!");
+            } else {
+                alert("حدث خطأ أثناء إضافة المنتج.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("حدث خطأ!");
+        });
+    });
+</script>
 {% endblock %}

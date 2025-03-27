@@ -3,6 +3,8 @@ from rest_framework.routers import DefaultRouter
 from .views import ProductViewSet  # تأكد من استيراد ProductViewSet
 from . import views
 from .views import test_500
+from django.contrib.auth.views import LogoutView
+from .views import logout_view
 
 # إعداد API
 router = DefaultRouter()
@@ -35,10 +37,21 @@ urlpatterns = [
     # مسار إنشاء الطلب
     path('order/create/', views.create_order, name='create_order'),
 
+    # مسار البحث
     path('search/', views.product_search, name='search'),
+
+    # مسارات تسجيل الدخول والتسجيل
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
+
+    # مسار اختبار الخطأ 500
     path("test-500/", test_500, name="test_500"),
+
+    # مسار العروض
+    path('offers/', views.offers, name='offers'),
+
+    # مسار تسجيل الخروج
+    path('logout/', logout_view, name='logout'),
 ]
 
 # إضافة روابط API من الروتر

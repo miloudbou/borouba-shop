@@ -1,69 +1,230 @@
 <!DOCTYPE html>
 <html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}بوروبة شوب | Borouba Shop{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap">
-    <link rel="stylesheet" type="text/css" href="{% static 'coloshop/styles/styles.css' %}">
 
-    <!-- Block لإضافة الأنماط الإضافية الخاصة بكل صفحة -->
+    <!-- Bootstrap & FontAwesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap"
+    />
+
+    <!-- ملف الأنماط المخصص -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'coloshop/styles/styles.css' %}"
+    />
+
     {% block styles %}{% endblock %}
-</head>
-<body>
 
-    <!-- 🔹 شريط التنقل -->
-    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-                <i class="fas fa-store"></i> بوروبة شوب | Borouba Shop
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}"><i class="fas fa-home"></i> الرئيسية | Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'product_list' %}"><i class="fas fa-box"></i> منتجاتنا | Nos Produits</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'offers' %}"><i class="fas fa-tags"></i> العروض الخاصة | Offres Spéciales</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'view_cart' %}">
-                            <i class="fas fa-shopping-cart"></i> 🛒 سلة التسوق | Panier <span class="badge bg-danger">{{ cart_items|length }}</span>
-                        </a>
-                    </li>
-                    
-                    <!-- زر تسجيل الدخول والتسجيل -->
-                    {% if user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج | Déconnexion</a></li>
-                    {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'register' %}"><i class="fas fa-user-plus"></i> التسجيل | S'inscrire</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> تسجيل الدخول | Se connecter</a></li>
-                    {% endif %}
-                </ul>
-                
-                <!-- زر اتصل بنا -->
-                <a href="{% url 'contact' %}" class="btn btn-contact ms-3"><i class="fas fa-phone"></i> اتصل بنا | Contact</a>
-            </div>
-        </div>
-    </nav>
+    <style>
+      /* تحسين الخلفية */
+      body {
+        font-family: "Cairo", sans-serif;
+        background: linear-gradient(to right, #f8b500, #f85f73); /* تدرج لوني */
+        color: #333;
+        min-height: 100vh;
+      }
 
-    <!-- 🔹 محتوى الصفحة -->
-    <div class="container mt-4">
-        {% block content %}{% endblock %}
+      /* تحسين شريط التنقل */
+      .navbar-custom {
+        background: #222; /* لون داكن */
+        padding: 15px 0;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+      }
+
+      .navbar-custom .nav-link {
+        font-weight: bold;
+        color: #fff;
+        transition: color 0.3s ease, transform 0.3s ease;
+      }
+
+      .navbar-custom .nav-link:hover {
+        color: #f85f73; /* لون مميز عند التمرير */
+        transform: translateY(-2px);
+      }
+
+      .navbar-custom .navbar-toggler-icon {
+        color: white;
+      }
+
+      /* تحسين الأزرار */
+      .btn-contact,
+      .btn-success,
+      .btn-warning,
+      .btn-danger {
+        font-weight: bold;
+        padding: 8px 15px;
+        border-radius: 8px;
+        transition: all 0.3s ease-in-out;
+      }
+
+      .btn-contact {
+        background-color: #f85f73;
+        color: #fff;
+      }
+
+      .btn-contact:hover {
+        background-color: #f8b500;
+        transform: scale(1.05);
+      }
+
+      .btn-success:hover {
+        background-color: #28a745;
+        transform: scale(1.05);
+      }
+
+      .btn-warning:hover {
+        background-color: #ffc107;
+        transform: scale(1.05);
+      }
+
+      .btn-danger:hover {
+        background-color: #dc3545;
+        transform: scale(1.05);
+      }
+
+      /* تحسين الفوتر */
+      footer.footer-custom {
+        background: #222;
+        color: white;
+        padding: 20px 0;
+      }
+
+      footer .social-icons a {
+        font-size: 1.5rem;
+        color: white;
+        margin: 0 10px;
+        transition: color 0.3s ease;
+      }
+
+      footer .social-icons a:hover {
+        color: #f85f73;
+      }
+
+      /* تحسين تأثيرات الصور */
+      .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* شريط العروض العلوي */
+      .alert-info {
+        background-color: #f85f73;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        margin-bottom: 0;
+      }
+    </style>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+  </head>
+  <body>
+    <!-- شريط العروض العلوي -->
+    <div class="alert alert-info mb-0">
+      <strong>عرض خاص! </strong> اشترِ الآن واحصل على خصم 10% على أول طلب.
     </div>
 
-    <!-- 🔹 الفوتر -->
-    <footer class="footer-custom mt-5 text-center">
-        <p>جميع الحقوق محفوظة &copy; 2025 | Tous droits réservés &copy; 2025</p>
-        <p>❤️ بوروبة شوب | Borouba Shop</p>
+    <!-- شريط التنقل -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+      <div class="container">
+        <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+          <i class="fas fa-store"></i> بوروبة شوب
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div
+          class="collapse navbar-collapse justify-content-between"
+          id="navbarNav"
+        >
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'home' %}">
+                <i class="fas fa-home"></i> الرئيسية
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'product_list' %}">
+                <i class="fas fa-box"></i> منتجاتنا
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'offers' %}">
+                <i class="fas fa-tags"></i> العروض
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'view_cart' %}">
+                <i class="fas fa-shopping-cart"></i> 🛒 سلة التسوق
+                <span class="badge bg-danger">{{ cart_items|length }}</span>
+              </a>
+            </li>
+          </ul>
+
+          <!-- أزرار تسجيل الدخول والتسجيل وزر الاتصال -->
+          <div class="navbar-buttons">
+            {% if user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="post" class="inline-form">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">
+                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج | Déconnexion
+              </button>
+            </form>
+            {% else %}
+            <a class="btn btn-success text-white" href="{% url 'login' %}">
+              <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+            </a>
+            <a class="btn btn-warning text-dark" href="{% url 'register' %}">
+              <i class="fas fa-user-plus"></i> التسجيل
+            </a>
+            {% endif %}
+
+            <!-- زر اتصل بنا -->
+            <a href="{% url 'contact' %}" class="btn btn-contact ms-3">
+              <i class="fas fa-phone"></i> اتصل بنا
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- محتوى الصفحة -->
+    <div class="container mt-4">{% block content %}{% endblock %}</div>
+
+    <!-- الفوتر -->
+    <footer class="footer-custom text-center py-3 mt-5">
+      <p>جميع الحقوق محفوظة &copy; 2025 | بوروبة شوب</p>
+      <div class="social-icons">
+        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+      </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Block لإضافة أكواد JavaScript مخصصة لكل صفحة -->
     {% block scripts %}{% endblock %}
-</body>
+  </body>
 </html>

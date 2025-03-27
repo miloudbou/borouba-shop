@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if offers %}
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">🔥 عروض مميزة 🔥</h2>
+    <div class="row">
+      {% for product in offers %}
+        <div class="col-md-4">
+          <div class="card shadow-sm border-0">
+            <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+            <div class="card-body text-center">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text">
+                <span class="text-danger fw-bold">{{ product.discount }}% خصم</span>  
+              </p>
+              <p class="text-muted">
+                <del>{{ product.original_price }} دج</del> 
+                <strong class="text-success">{{ product.price }} دج</strong>
+              </p>
+              <a href="{% url 'product_detail' product.id %}" class="btn btn-primary">🔍 عرض المنتج</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% else %}
+  <div class="alert alert-warning text-center mt-4" role="alert">
+    😞 لا توجد عروض متاحة حاليًا. تابعنا لمعرفة العروض القادمة!
+  </div>
+{% endif %}
+{% endblock %}

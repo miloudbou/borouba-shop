@@ -13,6 +13,9 @@ from .serializers import ProductSerializer
 from rest_framework import viewsets
 import logging
 from django.http import HttpResponseServerError
+from django.contrib.auth import logout
+from django.utils.translation import get_language
+
 
 # إعداد السجل (Logging)
 logger = logging.getLogger(__name__)
@@ -157,7 +160,7 @@ def payment_success(request):
     return render(request, "products/payment_success.html")
 
 # عرض سلة التسوق للمستخدم المسجل
-@login_required
+@login_required(login_url="login")  # يجبر المستخدم على تسجيل الدخول قبل الوصول إلى السلة
 def view_cart(request):
     try:
         order, created = Order.objects.get_or_create(user=request.user, is_paid=False)
@@ -166,12 +169,14 @@ def view_cart(request):
     except Exception as e:
         logger.error(f"خطأ في عرض السلة: {e}")
         messages.error(request, "❌ حدث خطأ أثناء عرض السلة.")
-        return redirect("index")  # يمكنك توجيه المستخدم إلى الصفحة الرئيسية إذا حدث خطأ
+        return redirect("index")
 
     return render(request, 'products/cart.html', {
         'cart_items': cart_items,
-        'total_price': total_price
+        'total_price': total_price,
+        'language': get_language(),
     })
+
 
 # إضافة منتج إلى السلة للمستخدم المسجل
 @login_required
@@ -335,3 +340,10 @@ def register_view(request):
 def test_500(request):
     # رفع خطأ 500 يدويا
     return HttpResponseServerError("حدث خطأ داخلي في الخادم")
+def offers(request):
+    offers = Product.objects.filter(is_offer=True)
+    return render(request, "products/offers.html", {"offers": offers})
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
