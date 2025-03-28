@@ -1,40 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}الرئيسية | بوروبة شوب{% endblock %}
-
 {% block content %}
-<div class="text-center mt-5">
-    <!-- عنوان الترحيب -->
-    <h1 class="display-4 fw-bold">مرحبًا بك في <span class="text-warning">بوروبة شوب!</span></h1>
-    <p class="lead">تصفح أحدث المنتجات لدينا بأفضل الأسعار. | Découvrez nos derniers produits aux meilleurs prix.</p>
-        <a href="{% url 'product_list' %}" class="btn btn-primary btn-lg">
-        <i class="fas fa-shopping-cart"></i> تصفح المنتجات | Voir les Produits
-    </a>
-{% if user.is_authenticated and user.is_staff %}
-    <a href="/admin/" class="btn btn-danger btn-lg mt-3">
-        <i class="fas fa-user-shield"></i> دخول لوحة التحكم
-    </a>
-{% endif %}
+<div class="container mt-4">
+    <!-- عنوان البحث -->
+    <h2 class="text-center fw-bold mb-3">🛍️ قائمة المنتجات</h2>
+    <p class="text-center text-muted">استكشف مجموعتنا المميزة بأفضل الأسعار</p>
 
-</div>
+    <!-- خانة البحث -->
+    <div class="d-flex justify-content-center mb-4">
+        <form method="GET" action="{% url 'search' %}" class="d-flex">
+            <input type="text" name="q" class="form-control me-2" placeholder="ابحث عن منتج..." required>
+            <button type="submit" class="btn btn-dark">
+                <i class="fas fa-search"></i> بحث
+            </button>
+        </form>
+    </div>
 
-<!-- قسم المنتجات المميزة -->
-<div class="container mt-5">
-    <h2 class="text-center fw-bold mb-4">✨ المنتجات المميزة | Produits Vedettes ✨</h2>
-    <div class="row">
+    <!-- عنوان المنتجات المتاحة -->
+    <h2 class="text-center fw-bold mb-4">✨ المنتجات المتاحة | Produits Disponibles ✨</h2>
+
+    <!-- شبكة المنتجات -->
+    <div class="product-grid">
         {% for product in products %}
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-lg border-0">
-                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}">
-                <div class="card-body text-center">
-                    <h5 class="card-title fw-bold">{{ product.name }}</h5>
-                    <p class="card-text text-muted">{{ product.price }} د.ج | DA</p>
-                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-primary">
-                        <i class="fas fa-info-circle"></i> التفاصيل | Détails
-                    </a>
-                </div>
+        <div class="product-card">
+            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+            <div class="card-body">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+                <p class="text-primary fw-bold">{{ product.price }} {{ product.currency }}</p>
+                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">
+                    <i class="fas fa-cart-plus"></i> إضافة إلى السلة
+                </a>
+                <a href="{% url 'product_detail' product.id %}" class="btn btn-info btn-sm">
+                    <i class="fas fa-eye"></i> عرض التفاصيل
+                </a>
             </div>
         </div>
+        {% empty %}
+        <p class="text-center text-muted">❌ لا توجد منتجات متاحة حاليًا.</p>
         {% endfor %}
     </div>
 </div>

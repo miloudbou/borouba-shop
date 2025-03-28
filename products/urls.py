@@ -5,6 +5,7 @@ from . import views
 from .views import test_500
 from django.contrib.auth.views import LogoutView
 from .views import logout_view
+from .views import profile # تأكد من استيراد الدالة المناسبة لتسجيل الخروج
 
 # إعداد API
 router = DefaultRouter()
@@ -52,6 +53,7 @@ urlpatterns = [
 
     # مسار تسجيل الخروج
     path('logout/', logout_view, name='logout'),
+    path('profile/', views.profile, name='profile'),
 ]
 
 # إضافة روابط API من الروتر

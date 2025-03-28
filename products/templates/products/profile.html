@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}ملفي الشخصي{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg rounded-3">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>ملفي الشخصي</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center">
+                        <img src="{% static 'images/default-avatar.png' %}" class="rounded-circle mb-3" width="120" height="120" alt="الصورة الشخصية">
+                        <h4>{{ user.username }}</h4>
+                        <p class="text-muted">{{ user.email }}</p>
+                    </div>
+                    <hr>
+                    <h5>تفاصيل الحساب</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item"><strong>الاسم الكامل:</strong> {{ user.get_full_name }}</li>
+                        <li class="list-group-item"><strong>البريد الإلكتروني:</strong> {{ user.email }}</li>
+                        <li class="list-group-item"><strong>تاريخ الانضمام:</strong> {{ user.date_joined|date:"Y-m-d" }}</li>
+                    </ul>
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'edit_profile' %}" class="btn btn-warning">تعديل الحساب</a>
+                        <a href="{% url 'logout' %}" class="btn btn-danger">تسجيل الخروج</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

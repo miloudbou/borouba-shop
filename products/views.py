@@ -344,6 +344,13 @@ def offers(request):
     offers = Product.objects.filter(is_offer=True)
     return render(request, "products/offers.html", {"offers": offers})
 
+
+
+@login_required
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('home')  # إعادة التوجيه إلى المسار home
+def profile(request):
+    profile = (request)
+    return render(request, 'products/profile.html', {'profile': profile})
+    

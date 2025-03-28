@@ -1,23 +1,43 @@
-import os
 from pathlib import Path
-from environ import Env  # مكتبة لإدارة المتغيرات البيئية
+import os
+import mimetypes
+import environ
 
-# ==========================
-# إعدادات المشروع الأساسية
-# ==========================
+# إعداد بيئة التشغيل
+# تحديد المسار الصحيح لملف .env في المجلد الجذر
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+env = environ.Env()
+env.read_env(os.path.join(BASE_DIR, '.env'))  # تحميل ملف .env من المجلد الجذر
+
+
+# إعدادات AliExpress API
+ALIEXPRESS_API_URL = "https://api-sandbox.aliexpress.com"
+ALIEXPRESS_APP_KEY = "ضع_المفتاح_هنا"
+ALIEXPRESS_SECRET = "ضع_السر_هنا"
+ALIEXPRESS_ACCESS_TOKEN = "ضع_التوكن_هنا"
+
+# إضافة نوع mime خاص للملفات
+mimetypes.add_type("text/css", ".css", True)
+
+# إعدادات PayPal
+PAYPAL_CLIENT_ID = env("PAYPAL_CLIENT_ID")
+PAYPAL_SECRET = env("PAYPAL_SECRET")
+PAYPAL_MODE = env("PAYPAL_MODE", default="live")  # استخدم "live" في الإنتاج
+
+# المسار الأساسي للمشروع
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# إعداد المتغيرات البيئية
-env = Env()
-Env.read_env(os.path.join(BASE_DIR, '.env'))  # تحميل المتغيرات من ملف .env
-
+# مفتاح الأمان
 SECRET_KEY = env("SECRET_KEY", default="change-this-to-a-secure-key")
-DEBUG = env.bool("DEBUG", default=False)
+
+# وضع التصحيح
+DEBUG = env.bool("DEBUG", default=True)
+
+# السماح بالوصول
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=['127.0.0.1', 'localhost', 'borouba-shop.onrender.com'])
 
-# ==========================
-# إعدادات التطبيقات
-# ==========================
+
+# التطبيقات المثبتة
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -30,12 +50,9 @@ INSTALLED_APPS = [
     'django_celery_beat',
 ]
 
-# ==========================
-# إعدادات الوسائط الوسطية (Middleware)
-# ==========================
+# الوسائط الوسطية (Middleware)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -43,16 +60,18 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'ecommerce_project.middleware.RequestLoggingMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-# ==========================
+# إعدادات عنوان URL الجذر
+ROOT_URLCONF = 'ecommerce_project.urls'
+
 # إعدادات القوالب (Templates)
-# ==========================
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),  # مسار مجلد القوالب
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -60,128 +79,101 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'ecommerce_project.context_processors.cart_items',
+                 'ecommerce_project.context_processors.cart_items',
             ],
         },
     },
 ]
 
-# ==========================
-# إعدادات قواعد البيانات
-# ==========================
+# تطبيق WSGI
+WSGI_APPLICATION = 'ecommerce_project.wsgi.application'
+
+# قراءة الإعدادات من ملف .env
+env = environ.Env()
+environ.Env.read_env()
+
 DATABASES = {
-    'default': env.db(default="postgresql://bouroubashop:miloud1982@localhost:5432/ecommerce_db")
+    'default': env.db(default="postgres://bouroubashop:miloud1982@localhost:5432/ecommerce_db")
 }
 
 
-# ==========================
+# التحقق من كلمات المرور
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
+
 # إعدادات اللغة والتوقيت
-# ==========================
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# ==========================
-# إعدادات الملفات الثابتة والميديا
-# ==========================
+# إعدادات الملفات الثابتة (Static Files)
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_ROOT = BASE_DIR / "staticfiles"  # مسار الملفات الثابتة عند استخدام collectstatic
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
 
-# ==========================
-# إعدادات تسجيل الدخول والخروج
-# ==========================
-LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'home'
-LOGIN_REDIRECT_URL = '/cart/'
+# نوع المفتاح الافتراضي للحقول الأساسية
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ==========================
-# إعدادات CSRF
-# ==========================
-CSRF_COOKIE_HTTPONLY = True
-CSRF_USE_SESSIONS = True
-
-# ==========================
-# إعدادات السجل (Logging)
-# ==========================
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-        'simple': {
-            'format': '{levelname} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs/errors.log'),
-            'formatter': 'verbose',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file', 'console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
-
-# ==========================
-# إعدادات AliExpress API
-# ==========================
-ALIEXPRESS_API_URL = "https://api-sandbox.aliexpress.com"
-ALIEXPRESS_APP_KEY = env("ALIEXPRESS_APP_KEY", default="ضع_المفتاح_هنا")
-ALIEXPRESS_SECRET = env("ALIEXPRESS_SECRET", default="ضع_السر_هنا")
-ALIEXPRESS_ACCESS_TOKEN = env("ALIEXPRESS_ACCESS_TOKEN", default="ضع_التوكن_هنا")
-
-# ==========================
-# إعدادات PayPal
-# ==========================
-PAYPAL_CLIENT_ID = env("PAYPAL_CLIENT_ID")
-PAYPAL_SECRET = env("PAYPAL_SECRET")
-PAYPAL_MODE = env("PAYPAL_MODE", default="live")
-
-# ==========================
-# إعدادات Celery
-# ==========================
+# إعداد Celery لاستخدام Redis كوسيط للرسائل
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 
-# ==========================
 # إعدادات العملة
-# ==========================
-DEFAULT_CURRENCY = "USD"
-SUPPORTED_CURRENCIES = ["USD", "DZD"]
+DEFAULT_CURRENCY = "USD"  # العملة الافتراضية
+SUPPORTED_CURRENCIES = ["USD", "DZD"]  # العملات المدعومة
+
+# سعر الصرف الحالي للدينار الجزائري مقابل الدولار (يجب تحديثه دوريًا)
 EXCHANGE_RATE_DZD_TO_USD = 0.0073  # 1 DZD = 0.0073 USD
 
-# ==========================
 # إعدادات البريد الإلكتروني
-# ==========================
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST = "smtp.gmail.com"  # استخدم SMTP الخاص بمزود الخدمة
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="your-email@gmail.com")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="your-email-password")
+EMAIL_HOST_USER = "your-email@gmail.com"
+EMAIL_HOST_PASSWORD = "your-email-password"
 DEFAULT_FROM_EMAIL = "no-reply@yourstore.com"
 
-ROOT_URLCONF = 'ecommerce_project.urls'
+# إعدادات الميديا
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# إعدادات ملفات السجل
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'ERROR',  # عرض الأخطاء فقط
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'ERROR',  # عرض الأخطاء فقط
+            'propagate': True,
+        },
+    },
+}
+
+LOGIN_REDIRECT_URL = '/cart/'  # توجيه المستخدم إلى سلة التسوق بعد تسجيل الدخول
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = '/'  # توجيه المستخدم إلى صفحة تسجيل الدخول بعد تسجيل الخروج
+
+
+
 

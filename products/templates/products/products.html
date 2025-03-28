@@ -3,56 +3,43 @@
 {% block title %}قائمة المنتجات{% endblock %}
 
 {% block content %}
-<!-- رأس الصفحة -->
-<header class="bg-primary text-white text-center py-5">
-    <h1 class="display-4">قائمة المنتجات</h1>
-    <p class="lead">اكتشف مجموعتنا الواسعة من المنتجات المميزة</p>
-</header>
-
-<!-- نموذج البحث -->
 <div class="container mt-4">
-    <form method="GET" action="{% url 'product_list' %}" class="mb-4">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="ابحث عن منتج..." value="{{ request.GET.search }}">
-            <button class="btn btn-dark" type="submit">🔍 بحث</button>
-        </div>
-    </form>
-</div>
+    <!-- ✅ عنوان البحث -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary">🛍️ قائمة المنتجات</h1>
+        <p class="text-muted">استكشف مجموعتنا المميزة بأفضل الأسعار</p>
+    </div>
 
-<!-- فلاتر المنتجات -->
-<div class="container mt-4">
-    <form method="GET" class="row">
-        <div class="col-md-8">
-            <select name="category" class="form-select">
-                <option value="">اختر الفئة</option>
-                {% for category in categories %}
-                    <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-4">
-            <button type="submit" class="btn btn-secondary w-100">تصفية</button>
-        </div>
-    </form>
-</div>
+    <!-- ✅ خانة البحث -->
+    <div class="d-flex justify-content-center mb-4">
+        <form method="GET" action="{% url 'product_list' %}" class="d-flex w-50">
+            <input type="text" name="search" class="form-control text-center" placeholder="🔍 ابحث عن منتج..." value="{{ request.GET.search }}" required>
+            <button class="btn btn-dark ms-2" type="submit">
+                <i class="fas fa-search"></i> بحث
+            </button>
+        </form>
+    </div>
 
-<!-- عرض المنتجات -->
-<div class="container mt-5">
-    <h2 class="text-center mb-4">منتجاتنا المميزة</h2>
-    <div class="row">
+    <!-- ✅ عنوان المنتجات المتاحة -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-secondary">📦 المنتجات المتاحة</h2>
+    </div>
+
+    <!-- ✅ شبكة المنتجات -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         {% for product in products %}
-        <div class="col-md-4 mb-4">
-            <div class="card product-card shadow-sm border-light rounded">
+        <div class="col">
+            <div class="card product-card shadow-sm border-light rounded h-100">
                 <img src="{{ product.image_url }}" class="card-img-top product-image" alt="{{ product.title }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ product.title }}</h5>
-                    <p class="card-text">{{ product.description|truncatewords:15 }}</p>
+                <div class="card-body text-center">
+                    <h5 class="card-title fw-bold">{{ product.title }}</h5>
+                    <p class="card-text text-muted">{{ product.description|truncatewords:15 }}</p>
                     <p class="text-primary fw-bold">{{ product.price }} {{ product.currency }}</p>
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-center gap-2">
                         <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">
-                            <i class="fas fa-cart-plus"></i> إضافة إلى السلة
+                            <i class="fas fa-cart-plus"></i> إضافة للسلة
                         </a>
-                        <a href="{% url 'product_detail' product.id %}" class="btn btn-info btn-sm">
+                        <a href="{% url 'product_detail' product.id %}" class="btn btn-info">
                             <i class="fas fa-eye"></i> عرض التفاصيل
                         </a>
                     </div>
@@ -60,9 +47,10 @@
             </div>
         </div>
         {% empty %}
-            <p class="text-center">لا توجد منتجات حالياً لعرضها.</p>
+        <div class="col-12 text-center">
+            <p class="fw-bold text-danger">❌ لا توجد منتجات متاحة حاليًا.</p>
+        </div>
         {% endfor %}
     </div>
 </div>
-
 {% endblock %}
