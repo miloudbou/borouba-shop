@@ -1,56 +1,153 @@
 {% extends "base.html" %}
+{% load static %}
+{% load humanize %}
 
-{% block title %}قائمة المنتجات{% endblock %}
+{% block title %}كل المنتجات | بوروبة شوب{% endblock %}
+{% block meta_description %}تصفح أفضل المنتجات في متجر بوروبة شوب مع تقييمات وشحن سريع.{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <!-- ✅ عنوان البحث -->
+<div class="container mt-5">
     <div class="text-center mb-5">
-        <h1 class="display-5 fw-bold text-primary">🛍️ قائمة المنتجات</h1>
-        <p class="text-muted">استكشف مجموعتنا المميزة بأفضل الأسعار</p>
+        <h1 class="display-6 fw-bold text-primary"><i class="fas fa-store"></i> منتجاتنا</h1>
+        <p class="text-muted">اكتشف تشكيلتنا المتنوعة بأسعار منافسة</p>
     </div>
 
-    <!-- ✅ خانة البحث -->
-    <div class="d-flex justify-content-center mb-4">
-        <form method="GET" action="{% url 'product_list' %}" class="d-flex w-50">
-            <input type="text" name="search" class="form-control text-center" placeholder="🔍 ابحث عن منتج..." value="{{ request.GET.search }}" required>
-            <button class="btn btn-dark ms-2" type="submit">
-                <i class="fas fa-search"></i> بحث
-            </button>
-        </form>
-    </div>
-
-    <!-- ✅ عنوان المنتجات المتاحة -->
-    <div class="text-center mb-4">
-        <h2 class="fw-bold text-secondary">📦 المنتجات المتاحة</h2>
-    </div>
-
-    <!-- ✅ شبكة المنتجات -->
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% if products %}
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {% for product in products %}
         <div class="col">
-            <div class="card product-card shadow-sm border-light rounded h-100">
-                <img src="{{ product.image_url }}" class="card-img-top product-image" alt="{{ product.title }}">
-                <div class="card-body text-center">
-                    <h5 class="card-title fw-bold">{{ product.title }}</h5>
-                    <p class="card-text text-muted">{{ product.description|truncatewords:15 }}</p>
-                    <p class="text-primary fw-bold">{{ product.price }} {{ product.currency }}</p>
-                    <div class="d-flex justify-content-center gap-2">
-                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">
-                            <i class="fas fa-cart-plus"></i> إضافة للسلة
+            <div class="card h-100 shadow-sm border-0">
+                <a href="{% url 'product_detail' product.id %}">
+                    <img src="{{ product.image_url|default:'/static/coloshop/images/placeholder-product.png' }}"
+                         class="card-img-top p-3"
+                         alt="{{ product.title }}"
+                         loading="lazy">
+                </a>
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'product_detail' product.id %}" class="text-dark text-decoration-none">
+                            {{ product.title|truncatechars:40 }}
                         </a>
-                        <a href="{% url 'product_detail' product.id %}" class="btn btn-info">
-                            <i class="fas fa-eye"></i> عرض التفاصيل
-                        </a>
+                    </h5>
+
+                    {% if product.description %}
+                    <p class="card-text text-muted small">
+                        {{ product.description|truncatewords:15 }}
+                    </p>
+                    {% endif %}
+
+                    <!-- ✅ تقييم المنتج -->
+                    {% if product.rating %}
+                    <div class="mb-2">
+                        <span class="text-warning">
+                            {% for i in "12345"|slice:":5" %}
+                                {% if forloop.counter <= product.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% elif product.rating|floatformat:1 >= forloop.counter0 and product.rating|floatformat:1 < forloop.counter %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        {% if product.reviews_count %}
+                        <small class="text-muted ms-1">({{ product.reviews_count }})</small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- ✅ معلومات السعر -->
+                    <div class="mb-2">
+                        {% if product.discounted_price %}
+                            <span class="h5 fw-bold text-danger">{{ product.discounted_price|intcomma }} د.ج</span>
+                            {% if product.original_price %}
+                            <del class="text-muted small ms-2">{{ product.original_price|intcomma }} د.ج</del>
+                            {% endif %}
+                        {% else %}
+                            <span class="h5 fw-bold text-primary">{{ product.price|intcomma }} د.ج</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- ✅ معلومات الشحن -->
+                    {% if product.shipping_info %}
+                    <div class="text-success small mb-2">
+                        <i class="fas fa-truck"></i> {{ product.shipping_info }}
+                    </div>
+                    {% endif %}
+
+                    <!-- ✅ زر الإضافة للسلة -->
+                    <div class="d-grid">
+                        <button class="btn btn-outline-success btn-sm add-to-cart"
+                                data-product-id="{{ product.id }}"
+                                data-url="{% url 'add_to_cart' product.id %}">
+                            <i class="fas fa-cart-plus"></i> أضف إلى السلة
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center">
-            <p class="fw-bold text-danger">❌ لا توجد منتجات متاحة حاليًا.</p>
-        </div>
         {% endfor %}
     </div>
+
+    <!-- ✅ تقسيم الصفحات -->
+    {% if is_paginated %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% elif num > page_obj.number|add:-3 and num < page_obj.number|add:3 %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">›</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+        <h4 class="text-muted">لا توجد منتجات حالياً</h4>
+    </div>
+    {% endif %}
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    $('.add-to-cart').click(function(e) {
+        e.preventDefault();
+        const btn = $(this);
+        const url = btn.data('url');
+
+        $.post(url, {
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            quantity: 1
+        })
+        .done(function(response) {
+            $('.cart-badge').text(response.cart_items_count);
+            toastr.success('تمت إضافة المنتج بنجاح');
+            btn.html('<i class="fas fa-check"></i>');
+            setTimeout(() => {
+                btn.html('<i class="fas fa-cart-plus"></i> أضف إلى السلة');
+            }, 2000);
+        })
+        .fail(function() {
+            toastr.error('فشل في إضافة المنتج للسلة');
+        });
+    });
+});
+</script>
 {% endblock %}

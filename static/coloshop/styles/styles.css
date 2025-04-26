@@ -10925,3 +10925,56 @@ textarea.form-control-lg {
   font-weight: bold;
   margin-top: 20px;
 }
+/* أنماط قائمة الرغبات */
+.wishlist-btn:hover {
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}
+
+.table-responsive {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* تصميم متجاوب للجدول */
+@media (max-width: 768px) {
+  .table-responsive {
+      border: 0;
+  }
+  
+  .table thead {
+      display: none;
+  }
+  
+  .table tr {
+      display: block;
+      margin-bottom: 1rem;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+  }
+  
+  .table td {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: right;
+      border-bottom: 1px solid #dee2e6;
+  }
+  
+  .table td::before {
+      content: attr(data-label);
+      font-weight: bold;
+      margin-left: 1rem;
+  }
+}

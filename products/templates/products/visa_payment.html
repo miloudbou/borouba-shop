@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center text-success">
+        💳 {% if language == 'ar' %} الدفع عبر فيزا / ماستركارد {% else %} Visa / Mastercard Payment {% endif %}
+    </h2>
+    <form method="post" action="{% url 'process_visa_payment' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="card_number">💳 {% if language == 'ar' %} رقم البطاقة {% else %} Card Number {% endif %}</label>
+            <input type="text" class="form-control" id="card_number" name="card_number" required placeholder="رقم البطاقة">
+        </div>
+        <div class="form-group">
+            <label for="expiry_date">📅 {% if language == 'ar' %} تاريخ انتهاء الصلاحية {% else %} Expiry Date {% endif %}</label>
+            <input type="month" class="form-control" id="expiry_date" name="expiry_date" required>
+        </div>
+        <div class="form-group">
+            <label for="cvv">🔒 {% if language == 'ar' %} CVV {% else %} CVV {% endif %}</label>
+            <input type="text" class="form-control" id="cvv" name="cvv" required placeholder="CVV">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3 w-100">
+            🛒 {% if language == 'ar' %} إتمام الدفع {% else %} Complete Payment {% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}

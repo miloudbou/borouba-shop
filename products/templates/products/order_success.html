@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'coloshop/css/order_success.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5 pt-5 text-center">
@@ -29,7 +34,7 @@
         <p><strong>{% if language == 'ar' %}رقم الطلب: {% else %}Order Number: {% endif %} {{ order.id }}</p>
         <p><strong>{% if language == 'ar' %}طريقة الدفع: {% else %}Payment Method: {% endif %} {{ order.payment_method }}</p>
         <p><strong>{% if language == 'ar' %}طريقة الشحن: {% else %}Shipping Method: {% endif %} {{ order.shipping_method.name }} - {{ order.shipping_method.price }} دج</p>
-        <p><strong>{% if language == 'ar' %}الإجمالي: {% else %}Total Amount: {% endif %} {{ order.total_amount }} دج</p>
+        <p><strong>{% if language == 'ar' %}الإجمالي: {% else %}Total Amount: {% endif %} {{ order.total_price }} دج</p>
         <p><strong>{% if language == 'ar' %}حالة الدفع: {% else %}Payment Status: {% endif %} 
             {% if order.is_paid %}
                 {% if language == 'ar' %} تم الدفع بنجاح {% else %} Paid Successfully {% endif %}

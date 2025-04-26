@@ -1,4 +1,12 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block meta %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
 
 {% block title %}قائمة المنتجات{% endblock %}
 
@@ -9,13 +17,6 @@
     <p class="lead">اكتشف منتجاتنا المتنوعة والمميزة</p>
 </header>
 
-<!-- شريط البحث -->
-<div class="container mt-4">
-    <form action="{% url 'search' %}" method="get" class="d-flex justify-content-center">
-        <input type="text" name="search" class="form-control w-50" placeholder="ابحث عن منتج..." value="{{ search }}">
-        <button type="submit" class="btn btn-primary ms-2">بحث</button>
-    </form>
-</div>
 
 <!-- عرض المنتجات -->
 <div class="container mt-5">
@@ -23,15 +24,59 @@
         {% for product in products %}
         <div class="col-md-4 mb-4">
             <div class="card shadow-lg border-light rounded">
-                <!-- صورة المنتج مع تأثير التمرير -->
+                <!-- صورة المنتج -->
                 <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}" style="transition: transform 0.3s ease;">
                 <div class="card-body">
                     <h5 class="card-title">{{ product.title }}</h5>
-                    <p class="card-text">{{ product.description|truncatewords:15 }}</p>
-                    <p class="text-primary fw-bold">{{ product.price }} د.ج</p>
+
+                    {% if product.description %}
+                    <p class="card-text text-muted small">{{ product.description|truncatewords:15 }}</p>
+                    {% endif %}
+
+                    <!-- ✅ التقييم وعدد المراجعات -->
+                    {% if product.rating %}
+                    <div class="mb-2">
+                        <span class="text-warning">
+                            {% for i in "12345"|slice:":5" %}
+                                {% if forloop.counter <= product.rating %}
+                                    <i class="fas fa-star"></i>
+                                {% elif product.rating|floatformat:1 >= forloop.counter0 and product.rating|floatformat:1 < forloop.counter %}
+                                    <i class="fas fa-star-half-alt"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        {% if product.reviews_count %}
+                        <small class="text-muted ms-1">({{ product.reviews_count }})</small>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <!-- ✅ السعر والتخفيض -->
+                    {% if product.discounted_price %}
+                        <p class="text-danger fw-bold">
+                            {{ product.discounted_price|intcomma }} د.ج
+                            {% if product.original_price %}
+                            <del class="text-muted small ms-2">{{ product.original_price|intcomma }} د.ج</del>
+                            {% endif %}
+                        </p>
+                    {% else %}
+                        <p class="text-primary fw-bold">{{ product.price|intcomma }} د.ج</p>
+                    {% endif %}
+
+                    <!-- ✅ معلومات الشحن -->
+                    {% if product.shipping_info %}
+                    <p class="text-success small">
+                        <i class="fas fa-truck"></i> {{ product.shipping_info }}
+                    </p>
+                    {% endif %}
+
+                    <!-- زر الإضافة إلى السلة -->
                     <div class="d-flex justify-content-between align-items-center">
-                        <!-- إضافة إلى السلة -->
-                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success w-100">إضافة إلى السلة</a>
+                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success w-100">
+                            <i class="fas fa-cart-plus"></i> إضافة إلى السلة
+                        </a>
                     </div>
                 </div>
             </div>
@@ -41,5 +86,4 @@
         {% endfor %}
     </div>
 </div>
-
 {% endblock %}

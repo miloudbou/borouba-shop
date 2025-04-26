@@ -13,26 +13,30 @@ class Category(models.Model):
         return self.name
 
 # 🔹 نموذج المنتج (محدث لدعم AliExpress API)
+
 class Product(models.Model):
     title = models.CharField(max_length=255)  # عنوان المنتج
     description = models.TextField(blank=True, null=True)  # وصف المنتج
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=False, default=1)  # الفئة
-    price = models.DecimalField(max_digits=10, decimal_places=2)  # السعر
+    price = models.DecimalField(max_digits=10, decimal_places=2)  # السعر الجديد
+    original_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # السعر الأصلي
     currency = models.CharField(max_length=10, default="دج")  # العملة الافتراضية
     image_url = models.URLField(blank=True, null=True)  # رابط الصورة
     affiliate_link = models.URLField(blank=True, null=True)  # رابط الإحالة من AliExpress
     aliexpress_product_id = models.CharField(max_length=50, blank=True, null=True)  # رقم المنتج في AliExpress
     created_at = models.DateTimeField(default=now)  # تاريخ الإضافة
     is_offer = models.BooleanField(default=False)
-
-
-    def get_price_display(self):
-        """إرجاع السعر مع العملة"""
-        return f"{self.price} {self.currency}"
+    is_flash_sale = models.BooleanField(default=False)
+    flash_sale_end = models.DateTimeField(null=True, blank=True)
+    sold_count = models.IntegerField(default=0)  # عدد المبيعات
+    is_active = models.BooleanField(default=True)  # حالة المنتج
+    rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)  # تقييم المنتج
+    reviews_count = models.IntegerField(default=0)  # عدد التقييمات
+    shipping_info = models.CharField(max_length=255, blank=True, null=True)  # معلومات الشحن
 
     def __str__(self):
         return self.title
-
+    
 # 🔹 نموذج الشحن
 class Shipping(models.Model):
     name = models.CharField(max_length=255)  # اسم طريقة الشحن
@@ -123,4 +127,37 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} × {self.product.title} في الطلب {self.order.id}"
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    added_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+        verbose_name = 'قائمة الرغبات'
+        verbose_name_plural = 'قوائم الرغبات'
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name}"
+    
+class SiteSettings(models.Model):
+    site_name = models.CharField(max_length=100)
+    site_description = models.TextField(blank=True)
+    logo = models.ImageField(upload_to='logos/', blank=True, null=True)
+    contact_email = models.EmailField(blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    facebook_url = models.URLField(blank=True)
+    instagram_url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.site_name
+
+    class Meta:
+        verbose_name = "إعدادات الموقع"
+        verbose_name_plural = "إعدادات الموقع"
+
+from django.db import models
+
+
      

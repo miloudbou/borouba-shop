@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4">إتمام الطلب</h2>
+    <form method="POST" class="card p-4 shadow-sm">
+        {% csrf_token %}
+
+        {% if not request.user.is_authenticated %}
+            <div class="mb-3">
+                <label for="email" class="form-label">البريد الإلكتروني</label>
+                <input type="email" name="email" class="form-control" placeholder="أدخل بريدك الإلكتروني" required>
+            </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label for="customer_name" class="form-label">الاسم الكامل</label>
+            <input type="text" name="customer_name" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="customer_address" class="form-label">العنوان</label>
+            <textarea name="customer_address" class="form-control" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="customer_phone" class="form-label">رقم الهاتف</label>
+            <input type="text" name="customer_phone" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="payment_method" class="form-label">طريقة الدفع</label>
+            <select name="payment_method" class="form-select">
+                <option value="cod">الدفع عند الاستلام</option>
+                <option value="paypal">PayPal</option>
+                <option value="credit_card">بطاقة الائتمان</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">إتمام الطلب</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}سياسة الإرجاع - بوروبة شوب{% endblock %}
+
+{% block styles %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">بوروبة شوب</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="تبديل القائمة">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'home' %}">الرئيسية</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active fw-bold text-primary" href="{% url 'return_policy' %}">سياسة الإرجاع</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-5 display-6 fw-bold text-primary" style="font-family: 'Cairo', sans-serif;">سياسة الإرجاع</h2>
+
+    <div class="card shadow-lg border-0" style="background: linear-gradient(to bottom right, #ffffff, #f9f9f9);">
+        <div class="card-body px-4 py-5">
+            <h4 class="card-title mb-3">📌 مقدمة</h4>
+            <p class="card-text">
+                نحن في <strong>بوروبة شوب</strong> نحرص على توفير أفضل تجربة تسوق. لضمان راحتك، نقدم لك سياسة الإرجاع التي توضح كيفية وشروط إرجاع المنتجات.
+            </p>
+
+            <h4 class="card-title mt-4 mb-3">⏱️ مدة الإرجاع</h4>
+            <p class="card-text">
+                يمكنك إرجاع المنتجات خلال <strong>30 يومًا</strong> من تاريخ الشراء، بشرط أن تكون في حالتها الأصلية وغير مستخدمة.
+            </p>
+
+            <h4 class="card-title mt-4 mb-3">✅ شروط الإرجاع</h4>
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> المنتج غير مستخدم أو مفتوح.</li>
+                <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> توفر الفاتورة الأصلية.</li>
+                <li class="list-group-item"><i class="fas fa-check-circle text-success me-2"></i> جميع الملحقات مرفقة.</li>
+            </ul>
+
+            <h4 class="card-title mt-4 mb-3">📦 إجراءات الإرجاع</h4>
+            <p class="card-text">
+                تواصل مع خدمة العملاء عبر البريد الإلكتروني أو الهاتف وسنوجهك خطوة بخطوة لإتمام عملية الإرجاع بكل سهولة.
+            </p>
+
+            <h4 class="card-title mt-4 mb-3">🚫 المنتجات غير القابلة للإرجاع</h4>
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><i class="fas fa-times-circle text-danger me-2"></i> المنتجات المفتوحة أو المستخدمة.</li>
+                <li class="list-group-item"><i class="fas fa-times-circle text-danger me-2"></i> المنتجات المخصصة للعميل.</li>
+            </ul>
+
+            <h4 class="card-title mt-4 mb-3">💳 استرداد الأموال</h4>
+            <p class="card-text">
+                بعد استلام المنتج المرتجع والتحقق منه، سيتم استرداد المبلغ إلى نفس وسيلة الدفع خلال <strong>7 أيام عمل</strong>.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %}
+<footer class="bg-dark text-white text-center py-4 mt-5">
+    <div class="container">
+        <p class="mb-0">جميع الحقوق محفوظة &copy; 2025 <strong>بوروبة شوب</strong></p>
+    </div>
+</footer>
+{% endblock %}

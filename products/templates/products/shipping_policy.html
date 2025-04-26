@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}سياسة الشحن{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock %}
+
+{% block navbar %}
+<!-- يمكنك إضافة شريط التنقل هنا إذا كنت بحاجة إليه -->
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="text-center mb-4">سياسة الشحن</h2>
+    
+    <div class="card shadow-lg">
+        <div class="card-body">
+            <h4 class="card-title">مقدمة</h4>
+            <p class="card-text">
+                نحن في بوروبة شوب نعمل جاهدين لتوفير أفضل تجربة تسوق لعملائنا. إليك بعض المعلومات المهمة حول سياسة الشحن الخاصة بنا:
+            </p>
+
+            <h4 class="card-title">مدة الشحن</h4>
+            <p class="card-text">
+                الشحن في العادة يستغرق بين 2 إلى 5 أيام عمل داخل البلد. قد تتأثر هذه المدة حسب الموقع الجغرافي أو الظروف الخاصة بالشحن.
+            </p>
+
+            <h4 class="card-title">طرق الشحن المتاحة</h4>
+            <p class="card-text">
+                نحن نقدم خيارات شحن مرنة ومناسبة لعملائنا. ستتمكن من اختيار طريقة الشحن المفضلة لك أثناء عملية الدفع.
+            </p>
+
+            <h4 class="card-title">التتبع</h4>
+            <p class="card-text">
+                بمجرد شحن طلبك، ستتمكن من تتبع حالته باستخدام رقم التتبع الذي سيتم تزويدك به.
+            </p>
+
+            <h4 class="card-title">الشحن الدولي</h4>
+            <p class="card-text">
+                نحن نقدم خدمات الشحن الدولي إلى بعض الدول. إذا كنت بحاجة إلى شحن دولي، يمكنك الاتصال بفريق خدمة العملاء للحصول على مزيد من المعلومات.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

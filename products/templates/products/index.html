@@ -1,44 +1,539 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}الصفحة الرئيسية | Borouba Shop{% endblock %}
+
+{% block meta_description %}
+اكتشف أحدث المنتجات والعروض الحصرية في متجر بوروبة شوب. تسوق الآن واحصل على أفضل الأسعار في الجزائر مع خدمة التوصيل السريع.
+{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <!-- عنوان البحث -->
-    <h2 class="text-center fw-bold mb-3">🛍️ قائمة المنتجات</h2>
-    <p class="text-center text-muted">استكشف مجموعتنا المميزة بأفضل الأسعار</p>
-
-    <!-- خانة البحث -->
-    <div class="d-flex justify-content-center mb-4">
-        <form method="GET" action="{% url 'search' %}" class="d-flex">
-            <input type="text" name="q" class="form-control me-2" placeholder="ابحث عن منتج..." required>
-            <button type="submit" class="btn btn-dark">
-                <i class="fas fa-search"></i> بحث
-            </button>
-        </form>
+    <!-- Hero Slider -->
+    <div id="mainCarousel" class="carousel slide mb-5 shadow rounded-3 overflow-hidden" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            {% for slide in sliders %}
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="{{ forloop.counter0 }}" 
+                    {% if forloop.first %}class="active"{% endif %}></button>
+            {% endfor %}
+        </div>
+        <div class="carousel-inner">
+            {% for slide in sliders %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <div class="row g-0 align-items-center" style="background-color: {{ slide.bg_color }};">
+                    <div class="col-md-6 p-5">
+                        <h1 class="display-5 fw-bold">{{ slide.title }}</h1>
+                        <p class="lead">{{ slide.subtitle }}</p>
+                        <a href="{{ slide.link }}" class="btn btn-lg btn-dark mt-3">
+                            {{ slide.button_text }} <i class="fas fa-arrow-left ms-2"></i>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="{{ slide.image.url }}" class="d-block w-100" alt="{{ slide.title }}">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        </button>
     </div>
 
-    <!-- عنوان المنتجات المتاحة -->
-    <h2 class="text-center fw-bold mb-4">✨ المنتجات المتاحة | Produits Disponibles ✨</h2>
-
-    <!-- شبكة المنتجات -->
-    <div class="product-grid">
-        {% for product in products %}
-        <div class="product-card">
-            <img src="{{ product.image_url }}" alt="{{ product.name }}">
-            <div class="card-body">
-                <h5 class="card-title">{{ product.name }}</h5>
-                <p class="card-text">{{ product.description|truncatewords:15 }}</p>
-                <p class="text-primary fw-bold">{{ product.price }} {{ product.currency }}</p>
-                <a href="{% url 'add_to_cart' product.id %}" class="btn btn-success">
-                    <i class="fas fa-cart-plus"></i> إضافة إلى السلة
-                </a>
-                <a href="{% url 'product_detail' product.id %}" class="btn btn-info btn-sm">
-                    <i class="fas fa-eye"></i> عرض التفاصيل
-                </a>
+    <!-- Flash Sale Countdown -->
+    <div class="alert alert-danger shadow-sm mb-5">
+        <div class="row align-items-center">
+            <div class="col-md-3 text-center mb-3 mb-md-0">
+                <span class="badge bg-white text-danger fs-5 p-2">⏰ عرض خاطف</span>
+            </div>
+            <div class="col-md-6 text-center">
+                <div id="countdown" class="d-flex justify-content-center">
+                    <div class="mx-2">
+                        <span class="hours fs-3 fw-bold">00</span>
+                        <span>ساعات</span>
+                    </div>
+                    <div class="mx-2">
+                        <span class="minutes fs-3 fw-bold">00</span>
+                        <span>دقائق</span>
+                    </div>
+                    <div class="mx-2">
+                        <span class="seconds fs-3 fw-bold">00</span>
+                        <span>ثواني</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 text-center text-md-end">
+                <a href="{% url 'flash_sale' %}" class="btn btn-dark">تسوق الآن <i class="fas fa-arrow-left ms-2"></i></a>
             </div>
         </div>
-        {% empty %}
-        <p class="text-center text-muted">❌ لا توجد منتجات متاحة حاليًا.</p>
-        {% endfor %}
     </div>
+
+    
+
+    <!-- Featured Categories -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">
+                <i class="fas fa-tags text-primary me-2"></i>الفئات الرئيسية
+            </h2>
+            <a href="{% url 'category_list' %}" class="btn btn-sm btn-outline-dark">
+                عرض الكل <i class="fas fa-arrow-left ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="row g-3">
+            {% for category in featured_categories %}
+            <div class="col-6 col-md-3">
+                <a href="{% url 'category_products' category.slug %}" class="text-decoration-none">
+                    <div class="card category-card h-100 border-0 shadow-sm hover-effect">
+                        <div class="position-relative">
+                            <img src="{{ category.image.url }}" class="card-img-top" 
+                                 alt="{{ category.name }}" style="height: 150px; object-fit: cover;">
+                            <div class="category-badge">{{ category.product_count }} منتج</div>
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-0">{{ category.name }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">
+                <i class="fas fa-star text-warning me-2"></i>منتجات مميزة
+            </h2>
+            <a href="{% url 'product_list' %}" class="btn btn-sm btn-outline-dark">
+                عرض الكل <i class="fas fa-arrow-left ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="row row-cols-2 row-cols-md-4 g-4">
+            {% for product in featured_products %}
+            <div class="col">
+                <div class="card product-card h-100 border-0 shadow-sm position-relative">
+                    {% if product.discount %}
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">خصم {{ product.discount }}%</span>
+                    {% endif %}
+                    {% if product.is_new %}
+                    <span class="badge bg-success position-absolute top-0 end-0 m-2">جديد</span>
+                    {% endif %}
+                    
+                    <a href="{% url 'product_detail' product.id %}">
+                        <img src="{{ product.image.url }}" class="card-img-top p-3" 
+                             alt="{{ product.name }}" style="height: 180px; object-fit: contain;">
+                    </a>
+                    
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <a href="{% url 'product_detail' product.id %}" class="text-dark text-decoration-none">
+                                <h5 class="card-title mb-1">{{ product.name|truncatechars:30 }}</h5>
+                            </a>
+                            <button class="btn btn-sm btn-link text-danger p-0 wishlist-btn" data-product-id="{{ product.id }}">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="product-rating mb-2">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star-half-alt text-warning"></i>
+                            <small class="text-muted">({{ product.review_count }})</small>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="fw-bold text-dark h5">{{ product.price }} دج</span>
+                                {% if product.old_price %}
+                                <del class="text-muted small d-block">{{ product.old_price }} دج</del>
+                                {% endif %}
+                            </div>
+                            <button class="btn btn-sm btn-outline-dark add-to-cart" data-product-id="{{ product.id }}">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <div class="alert alert-info text-center py-4">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h5>لا توجد منتجات مميزة حالياً</h5>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Flash Sale Products -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="badge bg-danger me-2">عرض محدود</span>
+                <h2 class="fw-bold mb-0 d-inline-block">
+                    <i class="fas fa-bolt text-warning me-2"></i>العروض الخاطفة
+                </h2>
+            </div>
+            <a href="{% url 'flash_sale' %}" class="btn btn-sm btn-outline-dark">
+                عرض الكل <i class="fas fa-arrow-left ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="row row-cols-2 row-cols-md-5 g-3">
+            {% for product in flash_sale_products %}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <span class="badge bg-danger position-absolute top-0 start-0 m-2">خصم {{ product.discount }}%</span>
+                    <a href="{% url 'product_detail' product.id %}">
+                        <img src="{{ product.image.url }}" class="card-img-top" 
+                             alt="{{ product.name }}" style="height: 120px; object-fit: contain;">
+                    </a>
+                    <div class="card-body p-2">
+                        <a href="{% url 'product_detail' product.id %}" class="text-dark text-decoration-none">
+                            <h6 class="card-title mb-1">{{ product.name|truncatechars:25 }}</h6>
+                        </a>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <span class="text-danger fw-bold">{{ product.price }} دج</span>
+                                <del class="text-muted small d-block">{{ product.old_price }} دج</del>
+                            </div>
+                            <button class="btn btn-sm btn-outline-dark p-1 add-to-cart" data-product-id="{{ product.id }}">
+                                <i class="fas fa-cart-plus"></i>
+                            </button>
+                        </div>
+                        <div class="progress mt-2" style="height: 5px;">
+                            <div class="progress-bar bg-danger" style="width: {{ product.sale_percentage }}%;"></div>
+                        </div>
+                        <small class="text-muted">باقي {{ product.remaining }} فقط</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Top Selling Products -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">
+                <i class="fas fa-fire text-danger me-2"></i>الأكثر مبيعاً
+            </h2>
+            <a href="{% url 'top_selling' %}" class="btn btn-sm btn-outline-dark">
+                عرض الكل <i class="fas fa-arrow-left ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="row g-4">
+            {% for product in top_selling_products %}
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <a href="{% url 'product_detail' product.id %}">
+                                <img src="{{ product.image.url }}" class="img-fluid rounded-start h-100" 
+                                     alt="{{ product.name }}" style="object-fit: cover;">
+                            </a>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{% url 'product_detail' product.id %}" class="text-dark text-decoration-none">
+                                        <h5 class="card-title">{{ product.name|truncatechars:35 }}</h5>
+                                    </a>
+                                    <span class="badge bg-primary">#{{ forloop.counter }}</span>
+                                </div>
+                                
+                                <div class="product-rating mb-2 small">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                    <span class="text-muted">({{ product.review_count }} تقييمات)</span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold text-dark h5">{{ product.price }} دج</span>
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-chart-line"></i> بيع {{ product.sold_count }}
+                                    </span>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-sm btn-outline-dark add-to-cart" data-product-id="{{ product.id }}">
+                                        <i class="fas fa-cart-plus"></i> أضف للسلة
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger wishlist-btn" data-product-id="{{ product.id }}">
+                                        <i class="far fa-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Customer Testimonials -->
+    <section class="mb-5">
+        <h2 class="text-center fw-bold mb-4">
+            <i class="fas fa-comment-alt text-info me-2"></i>آراء عملائنا
+        </h2>
+        
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for review in testimonials %}
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <img src="{{ review.customer.avatar.url }}" class="rounded-circle mb-3" 
+                             width="80" height="80" alt="{{ review.customer.name }}">
+                        <div class="product-rating mb-3">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <p class="card-text mb-3">"{{ review.comment }}"</p>
+                        <h6 class="card-title mb-1">{{ review.customer.name }}</h6>
+                        <small class="text-muted">{{ review.created_at|date:"d M Y" }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">
+                <i class="fas fa-newspaper text-success me-2"></i>أحدث المقالات
+            </h2>
+            <a href="{% url 'blog_list' %}" class="btn btn-sm btn-outline-dark">
+                عرض الكل <i class="fas fa-arrow-left ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="row g-4">
+            {% for post in blog_posts %}
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <a href="{% url 'blog_detail' post.slug %}">
+                        <img src="{{ post.image.url }}" class="card-img-top" 
+                             alt="{{ post.title }}" style="height: 200px; object-fit: cover;">
+                    </a>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="badge bg-light text-dark">{{ post.category }}</span>
+                            <small class="text-muted">{{ post.created_at|date:"d M Y" }}</small>
+                        </div>
+                        <a href="{% url 'blog_detail' post.slug %}" class="text-dark text-decoration-none">
+                            <h5 class="card-title">{{ post.title }}</h5>
+                        </a>
+                        <p class="card-text text-muted">{{ post.excerpt }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{% url 'blog_detail' post.slug %}" class="btn btn-sm btn-outline-dark w-100">
+                            اقرأ المزيد <i class="fas fa-arrow-left ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!-- Newsletter -->
+    <section class="bg-light p-5 rounded-3 shadow-sm mb-5">
+        <div class="row align-items-center">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <h3 class="fw-bold mb-2">اشترك في نشرتنا البريدية</h3>
+                <p class="text-muted mb-0">احصل على آخر العروض والتخفيضات مباشرة إلى بريدك</p>
+            </div>
+            <div class="col-md-6">
+                <form class="d-flex">
+                    <input type="email" class="form-control" placeholder="بريدك الإلكتروني" required>
+                    <button type="submit" class="btn btn-dark ms-2">
+                        اشتراك <i class="fas fa-paper-plane ms-2"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Brands -->
+    <section class="mb-5">
+        <h2 class="text-center fw-bold mb-4">
+            <i class="fas fa-copyright text-secondary me-2"></i>العلامات التجارية
+        </h2>
+        
+        <div class="row g-4">
+            {% for brand in brands %}
+            <div class="col-4 col-md-2">
+                <div class="card brand-card h-100 border-0 shadow-sm p-3">
+                    <img src="{{ brand.logo.url }}" class="img-fluid" 
+                         alt="{{ brand.name }}" style="filter: grayscale(100%); opacity: 0.7;">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
 </div>
+{% endblock %}
+
+{% block styles %}
+<style>
+    .hover-effect {
+        transition: all 0.3s ease;
+    }
+    .hover-effect:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .category-card {
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    .category-card:hover {
+        background-color: #f8f9fa;
+    }
+    .category-badge {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        padding: 2px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+    
+    .product-card {
+        transition: all 0.3s ease;
+    }
+    .product-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .product-rating {
+        color: #ffc107;
+    }
+    
+    .brand-card {
+        transition: all 0.3s ease;
+    }
+    .brand-card:hover {
+        background-color: #f8f9fa;
+    }
+    .brand-card:hover img {
+        filter: grayscale(0%) !important;
+        opacity: 1 !important;
+    }
+    
+    .add-to-cart:hover {
+        background-color: #212529;
+        color: white;
+    }
+    
+    .wishlist-btn:hover {
+        color: #dc3545 !important;
+    }
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Countdown Timer
+    function updateCountdown() {
+        const now = new Date();
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+        
+        const diff = endOfDay - now;
+        
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        document.querySelector('.hours').textContent = Math.floor(hours).toString().padStart(2, '0');
+        document.querySelector('.minutes').textContent = minutes.toString().padStart(2, '0');
+        document.querySelector('.seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+    
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+    
+    // Add to Cart AJAX
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            fetch(`/cart/add/${productId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    // Update cart count
+                    const cartCount = document.querySelector('.cart-count');
+                    if(cartCount) {
+                        cartCount.textContent = data.cart_items_count;
+                    }
+                    
+                    // Show success message
+                    alert('تمت إضافة المنتج إلى سلة التسوق بنجاح');
+                }
+            });
+        });
+    });
+    
+    // Wishlist AJAX
+    document.querySelectorAll('.wishlist-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product-id');
+            fetch(`/wishlist/toggle/${productId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    const icon = this.querySelector('i');
+                    if(data.added) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                        this.classList.add('text-danger');
+                    } else {
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                        this.classList.remove('text-danger');
+                    }
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

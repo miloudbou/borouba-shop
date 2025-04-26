@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h2 class="mb-4 text-success"><i class="fas fa-check-circle"></i> تم اختيار الدفع عند الاستلام</h2>
+    
+    <p class="lead">سيتم تجهيز طلبك، وسيتواصل معك عامل التوصيل لتأكيد التسليم.</p>
+
+    <div class="my-4">
+        <a href="{% url 'create_order' %}" class="btn btn-primary btn-lg">
+            تأكيد الطلب <i class="fas fa-shopping-bag"></i>
+        </a>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'product_list' %}" class="btn btn-outline-secondary">
+            الرجوع إلى المتجر <i class="fas fa-store"></i>
+        </a>
+    </div>
+</div>
+{% endblock %}

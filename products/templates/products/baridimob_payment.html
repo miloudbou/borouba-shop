@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center text-success">
+        💳 {% if language == 'ar' %} الدفع عبر بريديموب {% else %} Baridimob Payment {% endif %}
+    </h2>
+    <form method="post" action="{% url 'process_baridimob_payment' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="baridimob_number">📮 {% if language == 'ar' %} رقم بريديموب {% else %} Baridimob Number {% endif %}</label>
+            <input type="text" class="form-control" id="baridimob_number" name="baridimob_number" required placeholder="رقم بريديموب">
+        </div>
+        <div class="form-group">
+            <label for="amount">💰 {% if language == 'ar' %} المبلغ {% else %} Amount {% endif %}</label>
+            <input type="number" class="form-control" id="amount" name="amount" required placeholder="المبلغ" min="1" step="0.01">
+        </div>
+        <button type="submit" class="btn btn-primary mt-3 w-100">
+            🛒 {% if language == 'ar' %} إتمام الدفع {% else %} Complete Payment {% endif %}
+        </button>
+    </form>
+</div>
+{% endblock %}

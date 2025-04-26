@@ -1,38 +1,86 @@
 {% extends 'base.html' %}
-
-{% block title %}بحث المنتجات{% endblock %}
+{% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="text-center">بحث عن منتج</h2>
-    <form method="GET" action="{% url 'product_list' %}" class="mt-4">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="ابحث عن منتج..." value="{{ request.GET.search }}">
-            <button class="btn btn-dark" type="submit">🔍 بحث</button>
+<div class="container my-5">
+    <h2 class="mb-4">نتائج البحث عن: "{{ query }}"</h2>
+
+    <!-- قسم التصفية والبحث -->
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control" placeholder="ابحث عن منتج..." value="{{ query }}">
+        </div>
+        <div class="col-md-2">
+            <select name="category" class="form-select">
+                <option value="">كل الفئات</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if category_id|default:'' == cat.id|stringformat:"s" %}selected{% endif %}>
+                        {{ cat.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input type="number" step="1" min="0" name="min_price" class="form-control" placeholder="السعر الأدنى" value="{{ min_price }}">
+        </div>
+        <div class="col-md-2">
+            <input type="number" step="1" min="0" name="max_price" class="form-control" placeholder="السعر الأقصى" value="{{ max_price }}">
+        </div>
+        <div class="col-md-2">
+            <select name="sort" class="form-select">
+                <option value="newest" {% if sort_by == 'newest' %}selected{% endif %}>الأحدث</option>
+                <option value="price_asc" {% if sort_by == 'price_asc' %}selected{% endif %}>السعر: من الأقل</option>
+                <option value="price_desc" {% if sort_by == 'price_desc' %}selected{% endif %}>السعر: من الأعلى</option>
+                <option value="sold" {% if sort_by == 'sold' %}selected{% endif %}>الأكثر مبيعًا</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary w-100">بحث</button>
         </div>
     </form>
 
-    <div class="mt-4">
-        {% if products %}
-            <h4 class="text-center mb-4">نتائج البحث عن "{{ request.GET.search }}"</h4>
-            <div class="row">
-                {% for product in products %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card shadow-lg border-light rounded">
-                            <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.title }}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ product.title }}</h5>
-                                <p class="card-text">{{ product.description|truncatewords:15 }}</p>
-                                <p class="text-primary fw-bold">{{ product.price }} د.ج</p>
-                                <a href="{% url 'product_detail' product.id %}" class="btn btn-info">عرض التفاصيل</a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+    <!-- عدد النتائج -->
+    <p class="text-muted">عدد النتائج: {{ results_count }}</p>
+
+    <!-- عرض المنتجات -->
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-3 mb-4">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ product.image_url|default_if_none:'/static/coloshop/images/default.jpg' }}" class="card-img-top" alt="{{ product.title }}">
+                <div class="card-body">
+                    <h5 class="card-title text-truncate">{{ product.title }}</h5>
+                    <p class="card-text fw-bold text-primary">{{ product.price }} {{ product.currency }}</p>
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-dark btn-sm">عرض المنتج</a>
+                </div>
             </div>
-        {% else %}
-            <p class="text-center">لا توجد نتائج مطابقة لبحثك.</p>
-        {% endif %}
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning">لم يتم العثور على منتجات مطابقة.</div>
+        </div>
+        {% endfor %}
     </div>
+
+    <!-- صفحات التنقل -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if category_id %}category={{ category_id }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}sort={{ sort_by }}&page={{ page_obj.previous_page_number }}">السابق</a>
+            </li>
+            {% endif %}
+            <li class="page-item disabled">
+                <span class="page-link">الصفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?{% if query %}q={{ query }}&{% endif %}{% if category_id %}category={{ category_id }}&{% endif %}{% if min_price %}min_price={{ min_price }}&{% endif %}{% if max_price %}max_price={{ max_price }}&{% endif %}sort={{ sort_by }}&page={{ page_obj.next_page_number }}">التالي</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
 </div>
 {% endblock %}

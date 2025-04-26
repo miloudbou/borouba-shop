@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="container py-5">
+    <h2 class="text-center mb-5">🔥 عروض الوقت المحدود 🔥</h2>
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="card-text">
+                        <del>{{ product.price }} DA</del>
+                        <strong class="text-danger">{{ product.discount_price }} DA</strong>
+                    </p>
+                    <div class="countdown text-center text-primary" data-end="{{ product.flash_sale_end|date:'Y-m-d H:i:s' }}"></div>
+                    <a href="{% url 'product_detail' product.id %}" class="btn btn-outline-danger w-100 mt-3">اشتري الآن</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Countdown Timer Script -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const countdowns = document.querySelectorAll('.countdown');
+    countdowns.forEach(cd => {
+        const end = new Date(cd.dataset.end).getTime();
+        const interval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = end - now;
+
+            if (distance < 0) {
+                cd.innerHTML = "⏰ انتهى العرض";
+                clearInterval(interval);
+                return;
+            }
+
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            cd.innerHTML = `ينتهي خلال: ${hours}س ${minutes}د ${seconds}ث`;
+        }, 1000);
+    });
+});
+</script>
+
+{% endblock %}

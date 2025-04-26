@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<div class="container py-4">
+    <h2 class="mb-4">تعديل المنتج: {{ product.title }}</h2>
+    <form method="post" class="card p-4 shadow rounded">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">💾 حفظ التعديلات</button>
+        <a href="{% url 'manage_products' %}" class="btn btn-secondary">🔙 رجوع</a>
+    </form>
+</div>
+{% endblock %}

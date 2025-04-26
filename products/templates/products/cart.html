@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-5 cart-container">
@@ -15,48 +16,12 @@
         <table class="table table-striped text-center cart-table">
             <thead class="table-dark">
                 <tr>
-                    <th>
-                        {% if language == 'ar' %}
-                            الصورة
-                        {% else %}
-                            Image
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if language == 'ar' %}
-                            المنتج
-                        {% else %}
-                            Product
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if language == 'ar' %}
-                            السعر
-                        {% else %}
-                            Price
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if language == 'ar' %}
-                            الكمية
-                        {% else %}
-                            Quantity
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if language == 'ar' %}
-                            الإجمالي
-                        {% else %}
-                            Total
-                        {% endif %}
-                    </th>
-                    <th>
-                        {% if language == 'ar' %}
-                            إزالة
-                        {% else %}
-                            Remove
-                        {% endif %}
-                    </th>
+                    <th>{% if language == 'ar' %} الصورة {% else %} Image {% endif %}</th>
+                    <th>{% if language == 'ar' %} المنتج {% else %} Product {% endif %}</th>
+                    <th>{% if language == 'ar' %} السعر {% else %} Price {% endif %}</th>
+                    <th>{% if language == 'ar' %} الكمية {% else %} Quantity {% endif %}</th>
+                    <th>{% if language == 'ar' %} الإجمالي {% else %} Total {% endif %}</th>
+                    <th>{% if language == 'ar' %} إجراءات {% else %} Actions {% endif %}</th>
                 </tr>
             </thead>
             <tbody>
@@ -72,7 +37,19 @@
                     </td>
                     <td><strong>{{ item.total_price }} دج</strong></td>
                     <td>
-                        <button class="btn btn-sm btn-danger btn-remove" onclick="confirmDelete('{{ item.product.id }}')">❌</button>
+                        <div class="d-flex justify-content-center gap-2">
+                            <!-- زر إضافة إلى قائمة الرغبات -->
+                            <a href="{% url 'add_to_wishlist' item.product.id %}" 
+                               class="btn btn-sm btn-outline-danger wishlist-btn"
+                               title="{% if language == 'ar' %}إضافة إلى المفضلة{% else %}Add to Wishlist{% endif %}">
+                                <i class="fas fa-heart"></i>
+                            </a>
+                            
+                            <!-- زر إزالة من السلة -->
+                            <button class="btn btn-sm btn-danger btn-remove" onclick="confirmDelete('{{ item.product.id }}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}
@@ -81,31 +58,41 @@
 
         <div class="text-end mt-4">
             <h4>
-                {% if language == 'ar' %}
-                    الإجمالي: 
-                {% else %}
-                    Total: 
-                {% endif %}
+                {% if language == 'ar' %} الإجمالي: {% else %} Total: {% endif %}
                 <strong class="total-price">{{ cart_total }} دج</strong>
             </h4>
 
             {% if shipping_free %}
                 <p class="text-success">
-                    {% if language == 'ar' %}
-                        الشحن مجاني!
-                    {% else %}
-                        Free shipping!
-                    {% endif %}
+                    {% if language == 'ar' %} الشحن مجاني! {% else %} Free shipping! {% endif %}
                 </p>
             {% endif %}
 
-            <a href="{% url 'checkout' %}" class="btn btn-lg checkout-btn mt-3">
-                {% if language == 'ar' %}
-                    ✅ إتمام الشراء
-                {% else %}
-                    ✅ Checkout
-                {% endif %}
-            </a>
+            <div class="d-flex justify-content-end gap-2">
+                <a href="{% url 'wishlist' %}" class="btn btn-lg btn-outline-primary">
+                    {% if language == 'ar' %} 
+                        <i class="fas fa-heart me-2"></i> قائمة الرغبات
+                    {% else %} 
+                        <i class="fas fa-heart me-2"></i> Wishlist
+                    {% endif %}
+                </a>
+                
+                <a href="{% url 'checkout' %}" class="btn btn-lg btn-primary checkout-btn">
+                    {% if language == 'ar' %} 
+                        <i class="fas fa-check-circle me-2"></i> إتمام الشراء 
+                    {% else %} 
+                        <i class="fas fa-check-circle me-2"></i> Checkout 
+                    {% endif %}
+                </a>
+
+                <a href="{% url 'payment_page' %}" class="btn btn-lg btn-success">
+                    {% if language == 'ar' %} 
+                        <i class="fas fa-credit-card me-2"></i> الدفع الآن 
+                    {% else %} 
+                        <i class="fas fa-credit-card me-2"></i> Pay Now 
+                    {% endif %}
+                </a>
+            </div>
         </div>
 
     {% else %}
@@ -121,75 +108,4 @@
         </div>
     {% endif %}
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-$(document).ready(function() {
-    $(".quantity-input").on("change", function() {
-        var productId = $(this).data("id");
-        var newQuantity = $(this).val();
-        
-        var cart = JSON.parse(localStorage.getItem("cart") || "{}");
-        cart[productId] = newQuantity;
-        localStorage.setItem("cart", JSON.stringify(cart));
-
-        $.ajax({
-            url: "/update_cart/" + productId + "/",
-            method: "POST",
-            data: {
-                quantity: newQuantity,
-                csrfmiddlewaretoken: "{{ csrf_token }}"
-            },
-            success: function(response) {
-                location.reload();
-            }
-        });
-    });
-});
-
-function confirmDelete(productId) {
-    Swal.fire({
-        title: 
-            {% if language == 'ar' %}
-                "هل أنت متأكد؟"
-            {% else %}
-                "Are you sure?"
-            {% endif %}
-        ,
-        text: 
-            {% if language == 'ar' %}
-                "لن تتمكن من التراجع عن هذا الإجراء!"
-            {% else %}
-                "You won't be able to undo this action!"
-            {% endif %}
-        ,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#3085d6",
-        confirmButtonText: 
-            {% if language == 'ar' %}
-                "نعم، احذف المنتج!"
-            {% else %}
-                "Yes, delete the product!"
-            {% endif %}
-        ,
-        cancelButtonText: 
-            {% if language == 'ar' %}
-                "إلغاء"
-            {% else %}
-                "Cancel"
-            {% endif %}
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = "/remove_from_cart/" + productId;
-        }
-    });
-}
-</script>
 {% endblock %}
-
-
-

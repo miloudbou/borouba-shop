@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4 text-center">اختر طريقة الدفع</h2>
+
+  <form method="post" action="{% url 'process_payment_method' %}" class="space-y-4 max-w-md mx-auto">
+    {% csrf_token %}
+
+    <button type="submit" name="method" value="cash" class="btn btn-success w-100 mb-3">
+      <i class="fas fa-truck"></i> الدفع عند الاستلام
+    </button>
+
+    <button type="submit" name="method" value="paypal" class="btn btn-primary w-100 mb-3">
+      <i class="fab fa-paypal"></i> PayPal
+    </button>
+
+    <button type="submit" name="method" value="visa" class="btn btn-info w-100 mb-3">
+      <i class="far fa-credit-card"></i> Visa / Mastercard
+    </button>
+
+    <button type="submit" name="method" value="baridimob" class="btn btn-warning w-100 mb-3">
+      <i class="fas fa-university"></i> Baridimob
+    </button>
+  </form>
+</div>
+{% endblock %}

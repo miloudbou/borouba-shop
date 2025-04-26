@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <h2>إدارة المنتجات</h2>
+  <ul>
+    {% for product in products %}
+      <li>{{ product.name }} - 
+        <a href="{% url 'edit_product' product.id %}">تعديل</a> | 
+        <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">حذف</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

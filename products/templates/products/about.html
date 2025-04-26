@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+<section class="py-5 bg-light">
+  <div class="container">
+    <h1 class="text-center mb-4">من نحن - بوروبة شوب</h1>
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <img src="{% static 'coloshop/images/about_us.jpg' %}" class="img-fluid rounded shadow" alt="About Borouba Shop">
+      </div>
+      <div class="col-md-6">
+        <p class="lead">
+          <strong>بوروبة شوب</strong> هو متجر إلكتروني جزائري متخصص في توفير منتجات مختارة بعناية، بجودة عالية وأسعار تنافسية. هدفنا هو تمكين الجميع من تجربة تسوق مريحة وآمنة عبر الإنترنت.
+        </p>
+        <p>
+          نحن نعمل على الربط بين أفضل الموردين العالميين والعملاء في الجزائر من خلال نظام ذكي يعتمد على الربح بالعمولة.
+        </p>
+        <p>
+          وسائل الدفع المتاحة: <span class="badge bg-success">BaridiMob</span> <span class="badge bg-primary">PayPal</span> <span class="badge bg-info">Visa</span> <span class="badge bg-secondary">الدفع عند الاستلام</span>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

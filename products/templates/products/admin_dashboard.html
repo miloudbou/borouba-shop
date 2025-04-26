@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+  <h2>لوحة تحكم المسؤولين</h2>
+  
+  {% if user.is_superuser %}
+  <h3>أنت مسؤول رئيسي</h3>
+  <ul>
+    <li><a href="{% url 'manage_products' %}">إدارة المنتجات</a></li>
+    <li><a href="{% url 'manage_users' %}">إدارة المستخدمين</a></li>
+    <li><a href="{% url 'site_settings' %}">إعدادات الموقع</a></li>
+  </ul>
+{% elif is_admin_group %}
+  <h3>أنت موظف إداري</h3>
+  <ul>
+    <li><a href="{% url 'manage_products' %}">إدارة المنتجات</a></li>
+    <li><a href="{% url 'manage_orders' %}">إدارة الطلبات</a></li>
+  </ul>
+{% else %}
+  <p>ليس لديك صلاحيات للوصول إلى هذه الصفحة.</p>
+{% endif %}
+{% endblock %}

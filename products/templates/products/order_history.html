@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}🧾 سجل الطلبات | Historique des commandes{% endblock %}
+
+{% block styles %}
+<style>
+    .order-history {
+        background: linear-gradient(to right, #f8f9fa, #e9ecef);
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .order-item {
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        margin-bottom: 15px;
+        padding: 15px;
+        transition: transform 0.3s ease;
+    }
+    .order-item:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    .order-header {
+        font-weight: bold;
+        color: #007bff;
+    }
+    .empty-orders {
+        color: #6c757d;
+        font-style: italic;
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 order-history">
+    <h2 class="mb-4">🧾 سجل الطلبات / <span class="text-muted">Historique des commandes</span></h2>
+    <hr>
+    {% if orders %}
+        {% for order in orders %}
+            <div class="order-item">
+                <div class="order-header">📦 رقم الطلب / Numéro: {{ order.id }}</div>
+                <div>🗓️ التاريخ / Date: {{ order.created_at|date:"d/m/Y H:i" }}</div>
+                <div>🚚 الحالة / Statut: {{ order.status }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="empty-orders">لا توجد طلبات بعد / Aucun commande pour le moment.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

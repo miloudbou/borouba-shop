@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'products',  # التطبيق الخاص بالمنتجات
     'rest_framework',
     'django_celery_beat',
+    'django.contrib.humanize',
 ]
 
 # الوسائط الوسطية (Middleware)
@@ -80,6 +81,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                  'ecommerce_project.context_processors.cart_items',
+                 'ecommerce_project.context_processors.site_settings_context',
             ],
         },
     },

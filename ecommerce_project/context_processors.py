@@ -1,3 +1,6 @@
+from products.models import SiteSettings
+
+
 def cart_items(request):
     cart = request.session.get('cart', {})
     cart_items = []
@@ -11,4 +14,12 @@ def cart_items(request):
         'site_name': 'بوروبة شوب',
         'discount': 10  # مثال على خصم إذا كنت ترغب في إضافته
     }
+
+
+def site_settings_context(request):
+    settings = SiteSettings.objects.first()
+    return {
+        'site_settings': settings
+    }
+
 

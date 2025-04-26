@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}الأسئلة الشائعة{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4 text-center">الأسئلة الشائعة</h2>
+    <div class="accordion" id="faqAccordion">
+
+        <!-- السؤال الأول -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    كيف يمكنني الشراء من المتجر؟
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    لاستخدام المتجر، قم باختيار المنتج الذي ترغب في شرائه، أضفه إلى السلة، ثم تابع عملية الدفع من خلال اختيار طريقة الدفع المفضلة.
+                </div>
+            </div>
+        </div>
+
+        <!-- السؤال الثاني -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    ما طرق الدفع المتوفرة؟
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    نحن ندعم عدة طرق للدفع مثل PayPal، Baridimob، بطاقات Visa، والدفع عند الاستلام.
+                </div>
+            </div>
+        </div>
+
+        <!-- السؤال الثالث -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    هل يمكنني تتبع طلبي؟
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    نعم، إذا كنت قد أنشأت حسابًا على الموقع، يمكنك تتبع حالة طلبك من صفحة الطلبات في حسابك.
+                </div>
+            </div>
+        </div>
+
+        <!-- السؤال الرابع -->
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFour">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    كم تستغرق مدة الشحن؟
+                </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    مدة الشحن تعتمد على موقعك، وتستغرق عادةً من 2 إلى 5 أيام عمل داخل البلاد.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

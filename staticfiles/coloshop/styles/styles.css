@@ -1527,3 +1527,56 @@ section {
   position: relative;
   z-index: 1050; /* تأكد أن الشريط فوق كل العناصر */
 }
+
+/* تخصيص الأزرار في صفحة الدفع */
+.payment-button {
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 8px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.payment-button:hover {
+  transform: scale(1.05);
+}
+
+.payment-button i {
+  margin-right: 10px;
+}
+
+.bg-green-600 {
+  background-color: #28a745;
+}
+
+.bg-blue-600 {
+  background-color: #007bff;
+}
+
+.bg-indigo-600 {
+  background-color: #6610f2;
+}
+
+.bg-yellow-500 {
+  background-color: #ffc107;
+}
+
+/* تحديد الألوان عند التمرير */
+.bg-green-600:hover {
+  background-color: #218838;
+}
+
+.bg-blue-600:hover {
+  background-color: #0056b3;
+}
+
+.bg-indigo-600:hover {
+  background-color: #520dc2;
+}
+
+.bg-yellow-500:hover {
+  background-color: #e0a800;
+}
+

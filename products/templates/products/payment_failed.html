@@ -63,7 +63,7 @@
                         <nav class="navbar">
                             <ul class="navbar_menu">
                                 <li><a href="{% url 'home' %}">الصفحة الرئيسية</a></li>
-                                <li><a href="{% url 'products' %}">التسوق</a></li>
+                                <li><a href="{% url 'product_list' %}">التسوق</a></li>
                                 <li><a href="#">العروض</a></li>
                                 <li><a href="#">المدونة</a></li>
                                 <li><a href="contact.html">اتصل بنا</a></li>
@@ -104,7 +104,7 @@
 
                     <!-- Option to retry payment -->
                     <div class="retry_payment mt-4">
-                        <a href="{% url 'payment' %}" class="btn btn-danger btn-lg">
+                        <a href="{% url 'payment_page' %}" class="btn btn-danger btn-lg">
                             {% if language == 'ar' %} إعادة المحاولة {% else %} Retry Payment {% endif %}
                         </a>
                     </div>

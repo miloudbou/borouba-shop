@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block content %}
+  <h2>إدارة الطلبات</h2>
+  <ul>
+    {% for order in orders %}
+      <li>طلب رقم {{ order.id }} - {{ order.status }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
