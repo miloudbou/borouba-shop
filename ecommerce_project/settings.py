@@ -13,6 +13,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 DATABASES = {
     'default': env.db('DATABASE_URL', default='postgres://localhost:5432/mydb?sslmode=require'),
 }
+DATABASES['default']['OPTIONS'] = {
+    'sslmode': 'require',
+}
 # إعدادات AliExpress API
 ALIEXPRESS_API_URL = "https://api-sandbox.aliexpress.com"
 ALIEXPRESS_APP_KEY = "ضع_المفتاح_هنا"
