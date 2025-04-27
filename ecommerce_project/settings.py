@@ -9,8 +9,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
+# استخدام environ لقراءة DATABASE_URL
 DATABASES = {
-    'default': env.db('DATABASE_URL'),
+    'default': env.db('DATABASE_URL', default='postgres://localhost:5432/mydb?sslmode=require'),
 }
 # إعدادات AliExpress API
 ALIEXPRESS_API_URL = "https://api-sandbox.aliexpress.com"
