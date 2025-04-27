@@ -4,7 +4,7 @@ FROM python:3.9-slim
 # تثبيت الحزم اللازمة لبناء الحزم مثل mysqlclient
 RUN apt-get update && apt-get install -y \
     pkg-config \
-    libmysqlclient-dev \
+    libmariadb-dev \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
