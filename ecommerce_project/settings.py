@@ -3,13 +3,15 @@ import os
 import mimetypes
 import environ
 
-# إعداد بيئة التشغيل
-# تحديد المسار الصحيح لملف .env في المجلد الجذر
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# قراءة القيم من ملف .env
+BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
-env.read_env(os.path.join(BASE_DIR, '.env'))  # تحميل ملف .env من المجلد الجذر
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
-
+DATABASES = {
+    'default': env.db('DATABASE_URL'),
+}
 # إعدادات AliExpress API
 ALIEXPRESS_API_URL = "https://api-sandbox.aliexpress.com"
 ALIEXPRESS_APP_KEY = "ضع_المفتاح_هنا"
@@ -90,13 +92,7 @@ TEMPLATES = [
 # تطبيق WSGI
 WSGI_APPLICATION = 'ecommerce_project.wsgi.application'
 
-# قراءة الإعدادات من ملف .env
-env = environ.Env()
-environ.Env.read_env()
 
-DATABASES = {
-    'default': env.db(default="postgres://bouroubashop:miloud1982@localhost:5432/ecommerce_db")
-}
 
 
 # التحقق من كلمات المرور
