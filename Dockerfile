@@ -1,5 +1,6 @@
-# استخدام صورة Python الرسمية من Docker Hub
-FROM python:3.8-slim
+# استخدام صورة Python FROM python:3.10-slim
+FROM python:3.10-slim
+
 
 # تعيين مجلد العمل داخل الحاوية
 WORKDIR /app
