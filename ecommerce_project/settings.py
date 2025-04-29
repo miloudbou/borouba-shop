@@ -16,7 +16,8 @@ DATABASES = {
 DATABASES['default']['OPTIONS'] = {
     'sslmode': 'require',
 }
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(",")
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=["https://borouba-shop.onrender.com"])
+
 # إعدادات AliExpress API
 ALIEXPRESS_API_URL = "https://api-sandbox.aliexpress.com"
 ALIEXPRESS_APP_KEY = "ضع_المفتاح_هنا"
