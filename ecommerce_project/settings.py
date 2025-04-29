@@ -210,5 +210,18 @@ PAYPAL_CONFIG = {
 # =========================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# static & media settings
+if DEBUG:
+    # في وضع التطوير
+    STATICFILES_DIRS = [BASE_DIR / "static"]
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    # في وضع الإنتاج (مثل Render)
+    STATIC_ROOT = BASE_DIR / 'staticfiles'
+    MEDIA_ROOT = BASE_DIR / 'media'
+    STATICFILES_DIRS = []
+
 
 
